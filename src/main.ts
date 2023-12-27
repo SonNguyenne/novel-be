@@ -9,8 +9,13 @@ async function bootstrap() {
     .setTitle('Story API docs')
     .setDescription('The stories API description')
     .setVersion('1.0')
-    .addTag('users')
-    .addTag('products')
+    .addTag('user')
+    .addTag('product')
+    .addTag('category')
+    .addTag('chapter')
+    .addTag('rate')
+    .addTag('reading')
+    .addTag('history')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
