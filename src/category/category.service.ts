@@ -1,58 +1,88 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { CategoryDto } from './dto/category.dto';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
-  create(createCategoryDto: CreateCategoryDto) {
-    const response = {
-      statusCode: 201,
-      message: 'Category created successfully',
-      data: createCategoryDto,
-    };
-    return response;
+
+  async create(categoryDto: CategoryDto) {
+    if (!categoryDto.name) throw new BadRequestException('Name cannot be null');
+
+    try {
+      return await this.prisma.category.create({
+        data: {
+          name: categoryDto.name.trim(),
+          description: categoryDto.description.trim(),
+        },
+      });
+    } catch (err) {
+      if (err.code === 'P2002' && err.meta?.target?.[0] === 'name') {
+        throw new UnprocessableEntityException('Name is already taken');
+      }
+      throw new Error(err);
+    }
   }
 
   async findAll() {
-    const categoryList = await this.prisma.$queryRaw`SELECT * FROM "Article"`; // Retrieve from db
-    const response = {
-      statusCode: 200,
-      message: 'Category list was successfully retrieved',
-      data: categoryList,
-    };
-    return response;
+    try {
+      return await this.prisma.category.findMany();
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
-  findOne(id: number) {
-    const category = {}; //Retrieve from db
+  async findOne(id: number) {
+    const result = await this.prisma.category.findUnique({
+      where: { categoryId: Number(id) },
+    });
 
-    const response = {
-      statusCode: 200,
-      message: 'Category was successfully retrieved',
-      data: category,
-    };
+    if (!result) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
 
-    return response;
+    return result;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const response = {
-      statusCode: 200,
-      message: `Category id ${id} was successfully updated`,
-      data: updateCategoryDto,
-    };
+  async update(id: number, categoryDto: CategoryDto) {
+    if (!categoryDto.name) throw new BadRequestException('Name cannot be null');
 
-    return response;
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { categoryId: id },
+    });
+    if (!existingCategory) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+
+    try {
+      return await this.prisma.category.update({
+        where: { categoryId: id },
+        data: categoryDto,
+      });
+    } catch (err) {
+      if (err.code === 'P2002' && err.meta?.target?.[0] === 'name') {
+        throw new UnprocessableEntityException('Name is already taken');
+      }
+      throw new Error(err);
+    }
   }
 
-  remove(id: number) {
-    const response = {
-      statusCode: 200,
-      message: `Category id ${id} was successfully deleted`,
-    };
+  async remove(id: number) {
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { categoryId: id },
+    });
 
-    return response;
+    if (!existingCategory) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+
+    return this.prisma.category.delete({
+      where: { categoryId: Number(id) },
+    });
   }
 }

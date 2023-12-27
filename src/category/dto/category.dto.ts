@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCategoryDto {
-  @ApiProperty({
-    description: 'The unique identifier for the category. (Auto-incremented)',
-    example: 1,
-    required: false,
-  })
-  categoryId: string;
-
+export class CategoryDto {
   @ApiProperty({
     description: 'Name of the category',
     example: 'Kiếm hiệp',
