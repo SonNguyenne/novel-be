@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
+  constructor(private prisma: PrismaService) {}
   create(createCategoryDto: CreateCategoryDto) {
     const response = {
       statusCode: 201,
@@ -13,9 +15,8 @@ export class CategoryService {
     return response;
   }
 
-  findAll() {
-    const categoryList = []; // Retrieve from db
-
+  async findAll() {
+    const categoryList = await this.prisma.$queryRaw`SELECT * FROM "Article"`; // Retrieve from db
     const response = {
       statusCode: 200,
       message: 'Category list was successfully retrieved',
