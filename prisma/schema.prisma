@@ -11,20 +11,109 @@ datasource db {
 }
 
 // prisma/schema.prisma
-
-model Article {
-  id          Int      @id @default(autoincrement())
-  title       String   @unique
-  description String?
-  body        String
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum STATUS {
+  PROGRESS
+  DONE
 }
 
 model Category {
-  categoryId Int @id @default(autoincrement())
-  name String @unique
-  description String? 
-  // products Product[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  products    Product[]
+}
+
+model Product {
+  id            Int             @id @default(autoincrement())
+  name          String
+  description   String?
+  source        String
+  image         String
+  status        String          @default("PROGRESS")
+  price         Float?
+  authorName    String
+  viewCount     Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  chapters      Chapter[]
+  comments      Comment[]
+  rates         Rate[]
+  categories    Category[]
+  userId        Int
+  User          User            @relation(fields: [userId], references: [id])
+}
+
+model Chapter {
+  id            Int       @id @default(autoincrement())
+  productId     Int
+  chapterName   String
+  content       String
+  chapterNumber Int
+  readings      Reading[]
+  favorites     Favorite[]
+  histories     PaymentHistory[]
+  Product       Product   @relation(fields: [productId], references: [id])
+}
+
+model User {
+  id            Int              @id @default(autoincrement())
+  name          String
+  avatar        String?
+  money         Float            @default(0)
+  createdAt     DateTime         @default(now())
+  comments      Comment[]
+  rates         Rate[]
+  products      Product[]
+  readings      Reading[]
+  favorites     Favorite[]
+  payments      PaymentHistory[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Product   Product  @relation(fields: [productId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Rate {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Product   Product  @relation(fields: [productId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Reading {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  User           User     @relation(fields: [userId], references: [id])
+  chapters       Chapter[]
+}
+
+model Favorite {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  User           User     @relation(fields: [userId], references: [id])
+  chapters       Chapter[]
+}
+
+model PaymentHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  money     Float
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id])
+  chapters   Chapter[]
 }

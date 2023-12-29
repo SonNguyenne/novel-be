@@ -39,7 +39,7 @@ export class CategoryService {
 
   async findOne(id: number) {
     const result = await this.prisma.category.findUnique({
-      where: { categoryId: Number(id) },
+      where: { id: Number(id) },
     });
 
     if (!result) {
@@ -53,7 +53,7 @@ export class CategoryService {
     if (!categoryDto.name) throw new BadRequestException('Name cannot be null');
 
     const existingCategory = await this.prisma.category.findUnique({
-      where: { categoryId: id },
+      where: { id: id },
     });
     if (!existingCategory) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -61,7 +61,7 @@ export class CategoryService {
 
     try {
       return await this.prisma.category.update({
-        where: { categoryId: id },
+        where: { id: id },
         data: categoryDto,
       });
     } catch (err) {
@@ -74,7 +74,7 @@ export class CategoryService {
 
   async remove(id: number) {
     const existingCategory = await this.prisma.category.findUnique({
-      where: { categoryId: id },
+      where: { id: id },
     });
 
     if (!existingCategory) {
@@ -82,7 +82,7 @@ export class CategoryService {
     }
 
     return this.prisma.category.delete({
-      where: { categoryId: Number(id) },
+      where: { id: Number(id) },
     });
   }
 }
