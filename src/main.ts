@@ -14,7 +14,8 @@ async function bootstrap() {
     .addTag('category')
     .addTag('chapter')
     .addTag('rate')
-    .addTag('reading')
+    .addTag('list')
+    .addTag('comment')
     .addTag('history')
     .build();
   const document = SwaggerModule.createDocument(app, config);
