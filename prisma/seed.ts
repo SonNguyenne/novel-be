@@ -57,6 +57,9 @@ async function main() {
     const allProducts = await prisma.product.findMany();
     const randomProduct =
       allProducts[Math.floor(Math.random() * allProducts.length)];
+    const randomProducts = faker.helpers
+      .shuffle(allProducts)
+      .slice(0, faker.number.int({ max: 5 }));
 
     // Comment
     await prisma.comment.create({
@@ -98,37 +101,32 @@ async function main() {
       },
     });
 
-    // Reading
+    // List
     const allChapters = await prisma.chapter.findMany();
     const randomChapters = faker.helpers
       .shuffle(allChapters)
       .slice(0, faker.number.int({ max: 5 }));
+    const randomClassification = faker.helpers.arrayElement([
+      'READING',
+      'FAVORITE',
+    ]);
 
-    await prisma.reading.create({
+    await prisma.list.create({
       data: {
         userId: randomUser.id,
+        classification: randomClassification,
         chapters: {
-          connect: randomChapters.map((chapter) => ({ id: chapter.id })),
+          connect:
+            randomClassification === 'READING'
+              ? randomChapters.map((chapter) => ({ id: chapter.id }))
+              : [],
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    // Favorite
-    const allFavorites = await prisma.favorite.findMany();
-    const randomFavorites = faker.helpers
-      .shuffle(allFavorites)
-      .slice(0, faker.number.int({ max: 5 }));
-
-    await prisma.favorite.create({
-      data: {
-        userId: randomUser.id,
-        chapters: {
-          connect: randomFavorites.map((favorite) => ({ id: favorite.id })),
+        products: {
+          connect:
+            randomClassification === 'FAVORITE'
+              ? randomProducts.map((product) => ({ id: product.id }))
+              : [],
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     });
 
@@ -139,7 +137,7 @@ async function main() {
         money: parseFloat(faker.finance.amount(100, 10000, 2)),
         createdAt: new Date(),
         chapters: {
-          connect: randomFavorites.map((favorite) => ({ id: favorite.id })),
+          connect: randomChapters.map((chapter) => ({ id: chapter.id })),
         },
       },
     });
