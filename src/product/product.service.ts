@@ -34,6 +34,11 @@ export class ProductService {
           price: createProductDto.price,
           authorName: createProductDto.authorName.trim(),
           userId: createProductDto.userId,
+          categories: {
+            connect: createProductDto.categories.map((category) => ({
+              id: category.id,
+            })),
+          },
         },
       });
     } catch (err) {
@@ -83,8 +88,15 @@ export class ProductService {
 
     try {
       return await this.prisma.product.update({
-        where: { id: id },
-        data: updateProductDto,
+        where: { id },
+        data: {
+          ...updateProductDto,
+          categories: {
+            set: updateProductDto.categories.map((category) => ({
+              id: category.id,
+            })),
+          },
+        },
       });
     } catch (err) {
       throw new Error(err);

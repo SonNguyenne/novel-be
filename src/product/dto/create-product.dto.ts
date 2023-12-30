@@ -10,4 +10,5 @@ export class CreateProductDto extends PickType(ProductDto, [
   'price',
   'authorName',
   'userId',
+  'categories',
 ]) {}

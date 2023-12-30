@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from '../entities/product.entity';
+import { faker } from '@faker-js/faker';
+import { InheritCategoryDto } from 'src/category/dto/category.dto';
 
 export class ProductDto {
   @ApiProperty({ required: false })
@@ -7,42 +9,46 @@ export class ProductDto {
 
   @ApiProperty({
     description: 'Name of book',
-    example: 'Avenger',
+    example: faker.commerce.productName(),
   })
   name: string;
 
   @ApiProperty({
     required: false,
     description: 'Description of book',
-    example: 'This book is so nice',
+    example: faker.commerce.productDescription(),
   })
   description?: string | null;
 
   @ApiProperty({
     description: 'Source of book',
-    example: 'https://jaunty-bracelet.net/',
+    example: 'Sưu tầm',
   })
   source: string;
 
   @ApiProperty({
     description: 'Image of book',
-    example: 'https://loremflickr.com/640/480?lock=7052054822387712',
+    example: faker.image.url(),
   })
   image: string;
 
   @ApiProperty({
     required: false,
     description: 'Status of book: PROGRESS | DONE',
-    example: 'https://loremflickr.com/640/480?lock=7469231786426368',
+    example: 'PROGRESS',
   })
   status?: string;
 
-  @ApiProperty({ required: false, default: 0 })
+  @ApiProperty({
+    required: false,
+    default: 0,
+    example: faker.finance.amount(10, 100, 2),
+  })
   price?: number;
 
   @ApiProperty({
     description: 'Author of book',
-    example: 'Iron man',
+    example: faker.person.fullName(),
   })
   authorName: string;
 
@@ -58,4 +64,7 @@ export class ProductDto {
       id: number;
     };
   };
+
+  @ApiProperty({ type: () => [InheritCategoryDto] })
+  categories: InheritCategoryDto[];
 }
