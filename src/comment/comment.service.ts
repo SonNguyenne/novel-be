@@ -23,19 +23,35 @@ export class CommentService {
     }
   }
 
-  async findAll(productId: number) {
+  async findAllByProductId(productId: number) {
     return await this.prisma.comment.findMany({
       where: { productId },
     });
   }
 
-  // TODO
-  update(id: number, commentDto: CommentDto) {
-    return `This action updates a #${id} comment`;
+  async findAll() {
+    return await this.prisma.comment.findMany({});
   }
 
-  // TODO
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async update(id: number, commentDto: CommentDto) {
+    if (!commentDto.content)
+      throw new BadRequestException('Content cannot be null');
+
+    try {
+      return await this.prisma.comment.update({
+        where: { id },
+        data: {
+          content: commentDto.content.trim(),
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async remove(id: number) {
+    return await this.prisma.comment.delete({
+      where: { id },
+    });
   }
 }

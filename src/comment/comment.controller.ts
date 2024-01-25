@@ -28,21 +28,25 @@ export class CommentController {
     return this.commentService.create(commentDto);
   }
 
-  @Get(':productId')
+  @Get()
   @ApiOkResponse({ description: 'Comments retrieved successfully' })
-  findAll(@Param('productId') productId: string) {
-    return this.commentService.findAll(+productId);
+  findAll() {
+    return this.commentService.findAll();
   }
 
-  // // TODO
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() commentDto: CommentDto) {
-  //   return this.commentService.update(+id, commentDto);
-  // }
+  @Get(':productId')
+  @ApiOkResponse({ description: 'Comments retrieved successfully' })
+  findAllByProductId(@Param('productId') productId: string) {
+    return this.commentService.findAllByProductId(+productId);
+  }
 
-  // // TODO
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.commentService.remove(+id);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() commentDto: CommentDto) {
+    return this.commentService.update(+id, commentDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.commentService.remove(+id);
+  }
 }
