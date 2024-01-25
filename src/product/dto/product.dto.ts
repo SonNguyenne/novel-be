@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Product } from '../entities/product.entity';
 import { faker } from '@faker-js/faker';
-import { InheritCategoryDto } from 'src/category/dto/category.dto';
+import { InheritCategoryDto } from '../../category/dto/category.dto';
 
 export class ProductDto {
   @ApiProperty({ required: false })
