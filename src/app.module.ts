@@ -3,9 +3,16 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { CommentModule } from './comment/comment.module';
 import { RateModule } from './rate/rate.module';
+import { CrawlerModule } from './crawler/crawler.module';
 
 @Module({
-  imports: [CategoryModule, ProductModule, CommentModule, RateModule],
+  imports: [
+    CategoryModule,
+    ProductModule,
+    CommentModule,
+    RateModule,
+    CrawlerModule,
+  ],
   controllers: [],
   providers: [],
 })

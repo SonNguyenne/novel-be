@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('Story API docs')
     .setDescription('The stories API description')
     .setVersion('1.0')
+    .addTag('crawler')
     .addTag('user')
     .addTag('product')
     .addTag('category')
