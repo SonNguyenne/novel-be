@@ -1,5 +1,5 @@
 import { Controller, Body, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { CrawlerService } from './crawler.service';
 import { CrawlerDto } from './dto/crawler.dto';
 
@@ -8,7 +8,8 @@ import { CrawlerDto } from './dto/crawler.dto';
 export class CrawlerController {
   constructor(private readonly crawlerService: CrawlerService) {}
 
-  @Post()
+  @Post('/fromTruyenHd')
+  @ApiCreatedResponse({ description: 'Crawl successfully' })
   crawler(@Body() crawlerDto: CrawlerDto) {
     return this.crawlerService.crawler(crawlerDto);
   }

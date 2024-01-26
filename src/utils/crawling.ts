@@ -4,7 +4,7 @@ export const crawling = (
   uri: string,
   callback: (cheerio: cheerio.CheerioAPI) => any,
 ) => {
-  return new Promise<object>((resolve, reject) => {
+  return new Promise<any>((resolve, reject) => {
     const crawler = new Crawler({
       maxConnections: 10,
       callback: (
@@ -18,10 +18,14 @@ export const crawling = (
           return;
         }
 
-        const result = callback(res.$);
-        done();
+        try {
+          const result = callback(res.$);
+          done();
 
-        resolve(result);
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
       },
     });
 

@@ -14,6 +14,8 @@ export class CrawlerService {
         if (crawlerDto.uri.slice(-1) === '/')
           crawlerDto.uri = crawlerDto.uri.slice(0, -1);
 
+        if (!$('div#views').attr('data-id')) return false;
+
         // Get story information
         const id = $('div#views').attr('data-id').trim();
         const name = $('h1.crop-text-1').text().trim();
@@ -34,13 +36,17 @@ export class CrawlerService {
           chapters: [],
         };
 
+        return newStory;
+      });
+
+      if (result) {
         // Get chapter content - Break if paid content
         let foundContent = false;
-        for (let i = 1; i <= 3; i++) {
+        for (let i = 1; i <= result.chapterCount; i++) {
           // TODO: Change length
-          const uri = `${crawlerDto.uri}/chap/${id}-chuong-${i}/`;
+          const uri = `${crawlerDto.uri}/chap/${result.id}-chuong-${i}/`;
 
-          crawling(uri, ($: cheerio.CheerioAPI) => {
+          await crawling(uri, ($: cheerio.CheerioAPI) => {
             const chapterName = $('h1.text-center')
               .children()
               .remove()
@@ -48,7 +54,7 @@ export class CrawlerService {
               .text()
               .trim();
 
-            const element = $(crawlerDto.element);
+            const element = $('.reading');
             element.find('*:not(br)').remove();
 
             // Check if VIP content
@@ -56,16 +62,13 @@ export class CrawlerService {
               foundContent = true;
 
               const chapter: ChapterInterface = {
-                productId: id,
+                productId: result.id,
                 chapterName,
-                content: he.decode(element.html()).slice(30, 90),
+                content: he.decode(element.html()).slice(30, 60),
                 chapterNumber: i,
               };
 
-              // TODO: Push vô thì log ở đây ra nhưng mà trong `data: result` ko co
-              // Do bất đồng bộ || promise trả dữ liệu từ crawling trên rồi.
-              // --->>> Promise của utils/crawling.ts
-              newStory.chapters.push(chapter);
+              result.chapters.push(chapter);
             } else {
               foundContent = false;
             }
@@ -73,11 +76,6 @@ export class CrawlerService {
             if (!foundContent) return;
           });
         }
-
-        return newStory;
-      });
-
-      if (result) {
         return { data: result, message: 'Data found' };
       } else {
         return { data: null, message: 'Not found (Wrong uri or element)' };
