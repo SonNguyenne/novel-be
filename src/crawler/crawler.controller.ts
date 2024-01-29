@@ -8,9 +8,15 @@ import { CrawlerDto } from './dto/crawler.dto';
 export class CrawlerController {
   constructor(private readonly crawlerService: CrawlerService) {}
 
-  @Post('/fromTruyenHd')
+  @Post('/fromTruyenhd')
   @ApiCreatedResponse({ description: 'Crawl successfully' })
-  crawler(@Body() crawlerDto: CrawlerDto) {
-    return this.crawlerService.crawler(crawlerDto);
+  fromTruyenHd(@Body() crawlerDto: CrawlerDto) {
+    return this.crawlerService.fromTruyenhd(crawlerDto);
+  }
+
+  @Post('/fromTruyenfull')
+  @ApiCreatedResponse({ description: 'Crawl successfully' })
+  fromTruyenFull(@Body() crawlerDto: CrawlerDto) {
+    return this.crawlerService.fromTruyenfull(crawlerDto);
   }
 }
