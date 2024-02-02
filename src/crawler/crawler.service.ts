@@ -1,4 +1,4 @@
-import { CrawlerDto } from './dto/crawler.dto';
+import { TruyenHdDto, TruyenFullDto } from './dto/crawler.dto';
 import { crawling } from '../utils/crawling';
 import * as he from 'he';
 import {
@@ -7,7 +7,7 @@ import {
 } from './interface/CrawlerInteface';
 
 export class CrawlerService {
-  async fromTruyenhd(crawlerDto: CrawlerDto) {
+  async fromTruyenhd(crawlerDto: TruyenHdDto) {
     try {
       const result: ProductInterface = await crawling(
         crawlerDto.uri,
@@ -24,7 +24,11 @@ export class CrawlerService {
           const author = $('.table-column2.crop-text-1 a').text().trim();
           const chapterCount = $('a[href="#dsc"] span').text().trim();
           const image = $('.book3d img').attr('data-src').trim();
-          const status = $('.table-column2.crop-text-1 span').text().trim();
+          const status =
+            $('.table-column2.crop-text-1 span').text().trim() ==
+            'Đang Cập Nhật'
+              ? 'PROGRESS'
+              : 'DONE';
           const description = $('.excerpt-full.hidden').text().trim();
 
           const newStory: ProductInterface = {
@@ -67,7 +71,7 @@ export class CrawlerService {
               const chapter: ChapterInterface = {
                 productId: +result.id,
                 chapterName,
-                content: he.decode(element.html()).slice(30, 60),
+                content: he.decode(element.html()),
                 chapterNumber: i,
               };
 
@@ -88,7 +92,7 @@ export class CrawlerService {
     }
   }
 
-  async fromTruyenfull(crawlerDto: CrawlerDto) {
+  async fromTruyenfull(crawlerDto: TruyenFullDto) {
     try {
       const result: ProductInterface = await crawling(
         crawlerDto.uri,
@@ -123,7 +127,7 @@ export class CrawlerService {
             chapterCount = +chapterCountData.split(': ')[0].split(' ')[1];
           }
 
-          const image = $('img[itemprop="image"]').first().attr('data-cfsrc');
+          const image = $('img[itemprop="image"]').first().attr('src');
           const description = $('div.desc-text').text().trim();
 
           const newStory: ProductInterface = {
@@ -169,7 +173,7 @@ export class CrawlerService {
           } while (continueLoop === true);
         } else {
           // Get chapter content
-          for (let i = 1; i <= 3; i++) {
+          for (let i = 1; i <= result.chapterCount; i++) {
             const uri = `${crawlerDto.uri}/chuong-${i}/`;
 
             await crawling(uri, ($: cheerio.CheerioAPI) => {
@@ -182,7 +186,7 @@ export class CrawlerService {
               if (element.html()) {
                 const chapter: ChapterInterface = {
                   chapterName,
-                  content: he.decode(element.html()).slice(0, 60),
+                  content: he.decode(element.html()),
                   chapterNumber: i,
                 };
                 result.chapters.push(chapter);
