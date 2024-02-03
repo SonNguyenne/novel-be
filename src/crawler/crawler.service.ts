@@ -51,7 +51,6 @@ export class CrawlerService {
         // Get chapter content - Break if paid content
         let foundContent = false;
         for (let i = 1; i <= result.chapterCount; i++) {
-          // TODO: Change length
           const uri = `${crawlerDto.uri}/chap/${result.id}-chuong-${i}/`;
 
           await crawling(uri, ($: cheerio.CheerioAPI) => {
@@ -245,12 +244,12 @@ export class CrawlerService {
           const newStory: ProductInterface = {
             id: +id,
             name: await aiTranslate(name),
-            author: await aiTranslate(author),
+            author: await aiTranslate(author, 'author'),
             chapterCount: +chapterCount,
             category: await aiTranslate(category),
             image,
             status,
-            description: await aiTranslate(description),
+            description: await aiTranslate(description, 'content'),
             chapters: [],
           };
 
@@ -262,7 +261,6 @@ export class CrawlerService {
         // Get chapter content - Break if paid content
         let foundContent = true;
         for (let i = 1; i <= result.chapterCount; i++) {
-          // TODO: Change length
           const uri = `${crawlerDto.uri}&chapterid=${i}/`;
 
           await crawling(uri, async ($: cheerio.CheerioAPI) => {
@@ -277,7 +275,10 @@ export class CrawlerService {
 
               const chapter: ChapterInterface = {
                 chapterName: await aiTranslate(chapterName),
-                content: await aiTranslate(he.decode(element.html())),
+                content: await aiTranslate(
+                  he.decode(element.html()),
+                  'content',
+                ),
                 chapterNumber: i,
               };
 
