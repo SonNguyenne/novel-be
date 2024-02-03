@@ -16,3 +16,11 @@ export class TruyenFullDto {
   })
   uri: string;
 }
+
+export class ChinaDto {
+  @ApiProperty({
+    description: 'Link of website',
+    example: 'https://www.jjwxc.net/onebook.php?novelid=2530',
+  })
+  uri: string;
+}

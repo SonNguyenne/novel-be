@@ -3,6 +3,7 @@ export interface ProductInterface {
   name?: string;
   author?: string;
   chapterCount?: number;
+  category?: string;
   image?: string;
   status?: string;
   source?: string;
