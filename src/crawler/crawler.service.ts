@@ -244,12 +244,12 @@ export class CrawlerService {
           const newStory: ProductInterface = {
             id: +id,
             name: await aiTranslate(name),
-            author: await aiTranslate(author, 'author'),
+            author: await aiTranslate(author),
             chapterCount: +chapterCount,
             category: await aiTranslate(category),
             image,
             status,
-            description: await aiTranslate(description, 'content'),
+            description: await aiTranslate(description),
             chapters: [],
           };
 
@@ -275,10 +275,7 @@ export class CrawlerService {
 
               const chapter: ChapterInterface = {
                 chapterName: await aiTranslate(chapterName),
-                content: await aiTranslate(
-                  he.decode(element.html()),
-                  'content',
-                ),
+                content: await aiTranslate(he.decode(element.html())),
                 chapterNumber: i,
               };
 
