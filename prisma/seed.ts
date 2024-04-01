@@ -42,7 +42,6 @@ async function main() {
         source: faker.internet.url(),
         image: faker.image.url(),
         status: faker.helpers.arrayElement(['PROGRESS', 'DONE']),
-        price: parseFloat(faker.finance.amount(10, 100, 2)),
         authorName: faker.person.fullName(),
         viewCount: faker.number.int({ max: 10000 }),
         createdAt: new Date(),
@@ -98,6 +97,7 @@ async function main() {
         chapterName: faker.lorem.words(),
         content: faker.lorem.paragraphs({ min: 100, max: 150 }, '<br/>\n'),
         chapterNumber: (maxChapter?.chapterNumber || 0) + 1, // faker.number.int({ min: 1, max: 1000 })
+        price: parseFloat(faker.finance.amount(10, 100, 2)),
       },
     });
 

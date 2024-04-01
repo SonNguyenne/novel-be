@@ -25,14 +25,14 @@ model Category {
 
 model Product {
   id            Int             @id @default(autoincrement())
+  userId        Int
+  authorName    String
   name          String
-  description   String?
   source        String
   image         String
   status        String          @default("PROGRESS")
-  price         Float?
-  authorName    String
   viewCount     Int             @default(0)
+  description   String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   lists         List[]
@@ -40,7 +40,6 @@ model Product {
   comments      Comment[]
   rates         Rate[]
   categories    Category[]
-  userId        Int
   User          User            @relation(fields: [userId], references: [id])
 }
 
@@ -50,6 +49,9 @@ model Chapter {
   chapterName   String
   content       String
   chapterNumber Int
+  price         Float?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   lists         List[]
   histories     PaymentHistory[]
   Product       Product   @relation(fields: [productId], references: [id])
