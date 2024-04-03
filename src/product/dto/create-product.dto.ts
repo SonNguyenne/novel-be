@@ -7,7 +7,6 @@ export class CreateProductDto extends PickType(ProductDto, [
   'source',
   'image',
   'status',
-  'price',
   'authorName',
   'userId',
   'categories',

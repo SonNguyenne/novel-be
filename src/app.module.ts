@@ -4,6 +4,7 @@ import { ProductModule } from './product/product.module';
 import { CommentModule } from './comment/comment.module';
 import { RateModule } from './rate/rate.module';
 import { CrawlerModule } from './crawler/crawler.module';
+import { ChapterModule } from './chapter/chapter.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CrawlerModule } from './crawler/crawler.module';
     CommentModule,
     RateModule,
     CrawlerModule,
+    ChapterModule,
   ],
   controllers: [],
   providers: [],

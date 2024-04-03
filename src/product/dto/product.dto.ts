@@ -39,13 +39,6 @@ export class ProductDto {
   status?: string;
 
   @ApiProperty({
-    required: false,
-    default: 0,
-    example: faker.finance.amount(10, 100, 2),
-  })
-  price?: number;
-
-  @ApiProperty({
     description: 'Author of book',
     example: faker.person.fullName(),
   })

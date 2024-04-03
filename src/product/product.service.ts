@@ -31,7 +31,6 @@ export class ProductService {
           source: createProductDto.source.trim(),
           image: createProductDto.image.trim(),
           status: createProductDto.status.trim(),
-          price: createProductDto.price,
           authorName: createProductDto.authorName.trim(),
           userId: createProductDto.userId,
           categories: {
