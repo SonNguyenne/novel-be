@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { faker } from '@faker-js/faker';
 
 export class ChapterDto {
@@ -42,3 +42,5 @@ export class ChapterDto {
     };
   };
 }
+
+export class InheritChapterDto extends PickType(ChapterDto, ['id']) {}

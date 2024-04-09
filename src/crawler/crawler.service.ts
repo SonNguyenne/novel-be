@@ -1,3 +1,4 @@
+import { Status } from './../enums/status.enum';
 import { TruyenHdDto, TruyenFullDto } from './dto/crawler.dto';
 import { crawling } from '../utils/crawling';
 import * as he from 'he';
@@ -27,8 +28,8 @@ export class CrawlerService {
           const status =
             $('.table-column2.crop-text-1 span').text().trim() ==
             'Đang Cập Nhật'
-              ? 'PROGRESS'
-              : 'DONE';
+              ? Status.PROGRESS
+              : Status.DONE;
           const description = $('.excerpt-full.hidden').text().trim();
 
           const newStory: ProductInterface = {
@@ -110,8 +111,8 @@ export class CrawlerService {
           const category = $('.info a[itemprop="genre"]').text().trim();
           const status =
             $('.info span.text-primary').text().trim() == 'Đang ra'
-              ? 'PROGRESS'
-              : 'DONE';
+              ? Status.PROGRESS
+              : Status.DONE;
 
           var chapterCount = 0;
           const canCountChapter = $('.l-chapter .l-chapters a')

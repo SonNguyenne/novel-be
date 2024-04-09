@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { faker } from '@faker-js/faker';
 import { InheritCategoryDto } from '../../category/dto/category.dto';
 
@@ -60,3 +60,5 @@ export class ProductDto {
   @ApiProperty({ type: () => [InheritCategoryDto] })
   categories: InheritCategoryDto[];
 }
+
+export class InheritProductDto extends PickType(ProductDto, ['id']) {}

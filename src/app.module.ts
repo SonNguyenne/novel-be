@@ -5,6 +5,7 @@ import { CommentModule } from './comment/comment.module';
 import { RateModule } from './rate/rate.module';
 import { CrawlerModule } from './crawler/crawler.module';
 import { ChapterModule } from './chapter/chapter.module';
+import { ListModule } from './list/list.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ChapterModule } from './chapter/chapter.module';
     RateModule,
     CrawlerModule,
     ChapterModule,
+    ListModule,
   ],
   controllers: [],
   providers: [],
