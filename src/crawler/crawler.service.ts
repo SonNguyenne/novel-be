@@ -1,11 +1,12 @@
 import { Status } from './../enums/status.enum';
-import { TruyenHdDto, TruyenFullDto } from './dto/crawler.dto';
+import { TruyenHdDto, TruyenFullDto, ChinaDto } from './dto/crawler.dto';
 import { crawling } from '../utils/crawling';
 import * as he from 'he';
 import {
   ChapterInterface,
   ProductInterface,
 } from './interface/CrawlerInteface';
+import { aiTranslate } from '../utils/aiTranslate';
 
 export class CrawlerService {
   async fromTruyenhd(crawlerDto: TruyenHdDto) {
@@ -51,7 +52,6 @@ export class CrawlerService {
         // Get chapter content - Break if paid content
         let foundContent = false;
         for (let i = 1; i <= result.chapterCount; i++) {
-          // TODO: Change length
           const uri = `${crawlerDto.uri}/chap/${result.id}-chuong-${i}/`;
 
           await crawling(uri, ($: cheerio.CheerioAPI) => {
@@ -66,7 +66,11 @@ export class CrawlerService {
             element.find('*:not(br)').remove();
 
             // Check if VIP content
-            if (element.html()) {
+            if (
+              element.html() &&
+              element.html() !== null &&
+              element.html().trim() !== ''
+            ) {
               foundContent = true;
 
               const chapter: ChapterInterface = {
@@ -81,8 +85,11 @@ export class CrawlerService {
               foundContent = false;
             }
 
-            if (!foundContent) return;
+            if (!foundContent) return false;
           });
+          if (!foundContent) {
+            break;
+          }
         }
         return { data: result, message: 'Data found' };
       } else {
@@ -193,6 +200,95 @@ export class CrawlerService {
                 result.chapters.push(chapter);
               }
             });
+          }
+        }
+        return { data: result, message: 'Data found' };
+      } else {
+        return { data: null, message: 'Not found (Wrong uri or element)' };
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async fromChina(crawlerDto: ChinaDto) {
+    try {
+      const result: ProductInterface = await crawling(
+        crawlerDto.uri,
+        async ($: cheerio.CheerioAPI) => {
+          // Check last character of uri
+          if (crawlerDto.uri.slice(-1) === '/')
+            crawlerDto.uri = crawlerDto.uri.slice(0, -1);
+
+          if (!$('#clickNovelid').text()) return false;
+
+          // Get story information
+          const id = crawlerDto.uri.split('?novelid=')[1];
+          const name = $('span[itemprop="articleSection"]').text().trim();
+          const author = $('span[itemprop="author"]').text().trim();
+          const category = $('span[itemprop="genre"]').text().trim();
+          const chapterCount = $('tr[itemprop="chapter"]')
+            .last()
+            .find('td')
+            .first()
+            .text()
+            .trim();
+          const image = $('img.noveldefaultimage[itemprop="image"]')
+            .attr('src')
+            .trim();
+          const status =
+            $('span[itemprop="updataStatus"] font').text().trim() == '完结'
+              ? 'DONE'
+              : 'PROGRESS';
+          const description = $('div#novelintro').text().trim();
+
+          const newStory: ProductInterface = {
+            id: +id,
+            name: await aiTranslate(name),
+            author: await aiTranslate(author),
+            chapterCount: +chapterCount,
+            category: await aiTranslate(category),
+            image,
+            status,
+            description: await aiTranslate(description),
+            chapters: [],
+          };
+
+          return newStory;
+        },
+      );
+
+      if (result) {
+        // Get chapter content - Break if paid content
+        let foundContent = true;
+        for (let i = 1; i <= result.chapterCount; i++) {
+          const uri = `${crawlerDto.uri}&chapterid=${i}/`;
+
+          await crawling(uri, async ($: cheerio.CheerioAPI) => {
+            const chapterName = $('div.novelbody div div h2').text().trim();
+
+            const element = $('div.novelbody div');
+            element.find('*:not(br)').remove();
+
+            // Check if VIP content
+            if (element.html() && element.html() !== null) {
+              foundContent = true;
+
+              const chapter: ChapterInterface = {
+                chapterName: await aiTranslate(chapterName),
+                content: await aiTranslate(he.decode(element.html())),
+                chapterNumber: i,
+              };
+
+              result.chapters.push(chapter);
+            } else {
+              foundContent = false;
+            }
+
+            if (!foundContent) return false;
+          });
+          if (!foundContent) {
+            break;
           }
         }
         return { data: result, message: 'Data found' };
