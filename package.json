@@ -23,6 +23,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.552.0",
     "@google/generative-ai": "^0.2.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",

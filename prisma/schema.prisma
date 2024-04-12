@@ -60,8 +60,12 @@ model Chapter {
 model User {
   id            Int              @id @default(autoincrement())
   name          String
-  avatar        String?
+  email         String
+  phone         String
+  birthdate     DateTime
+  picture       String?
   money         Float            @default(0)
+  refresh_token String
   createdAt     DateTime         @default(now())
   comments      Comment[]
   rates         Rate[]

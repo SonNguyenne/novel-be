@@ -6,6 +6,7 @@ import { RateModule } from './rate/rate.module';
 import { CrawlerModule } from './crawler/crawler.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { ListModule } from './list/list.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ListModule } from './list/list.module';
     CrawlerModule,
     ChapterModule,
     ListModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
