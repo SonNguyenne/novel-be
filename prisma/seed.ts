@@ -21,8 +21,12 @@ async function main() {
     await prisma.user.create({
       data: {
         name: faker.person.fullName(),
-        avatar: faker.image.avatar(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        birthdate: faker.date.past(),
+        picture: faker.image.avatar(),
         money: parseFloat(faker.finance.amount(100, 10000, 2)),
+        refreshToken: faker.string.uuid(),
       },
     });
 

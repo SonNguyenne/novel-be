@@ -61,11 +61,11 @@ model User {
   id            Int              @id @default(autoincrement())
   name          String
   email         String
-  phone         String
-  birthdate     DateTime
+  phone         String?
+  birthdate     DateTime?
   picture       String?
   money         Float            @default(0)
-  refresh_token String
+  refreshToken String
   createdAt     DateTime         @default(now())
   comments      Comment[]
   rates         Rate[]
