@@ -65,7 +65,8 @@ model User {
   birthdate     DateTime?
   picture       String?
   money         Float            @default(0)
-  refreshToken String
+  refreshToken  String?
+  emailVerified Boolean          @default(false)
   createdAt     DateTime         @default(now())
   comments      Comment[]
   rates         Rate[]

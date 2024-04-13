@@ -27,6 +27,7 @@ async function main() {
         picture: faker.image.avatar(),
         money: parseFloat(faker.finance.amount(100, 10000, 2)),
         refreshToken: faker.string.uuid(),
+        emailVerified: faker.datatype.boolean(),
       },
     });
 
