@@ -2,6 +2,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -21,8 +22,14 @@ async function main() {
     await prisma.user.create({
       data: {
         name: faker.person.fullName(),
-        avatar: faker.image.avatar(),
+        email: faker.internet.email(),
+        password: bcrypt.hashSync('123456', Number(process.env.SALT_BCRYPT)),
+        phone: faker.phone.number(),
+        birthdate: faker.date.past(),
+        picture: faker.image.avatar(),
         money: parseFloat(faker.finance.amount(100, 10000, 2)),
+        refreshToken: faker.string.uuid(),
+        emailVerified: faker.datatype.boolean(),
       },
     });
 
