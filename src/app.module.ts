@@ -7,6 +7,7 @@ import { CrawlerModule } from './crawler/crawler.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { ListModule } from './list/list.module';
 import { AuthModule } from './auth/auth.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     ChapterModule,
     ListModule,
     AuthModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],
