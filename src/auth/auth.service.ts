@@ -13,6 +13,7 @@ import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { RefreshAuthDto } from './dto/refresh-auth.dto';
 import { ResendAuthDto } from './dto/resend-auth.dto';
 import { SignupAuthDto } from './dto/signup-auth.dto';
+import { PrismaService } from 'prisma/prisma.service';
 
 const client = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION,
@@ -20,6 +21,8 @@ const client = new CognitoIdentityProviderClient({
 
 @Injectable()
 export class AuthService {
+  constructor(private prisma: PrismaService) {}
+
   async signup(signupAuthDto: SignupAuthDto) {
     if (!signupAuthDto.name)
       throw new BadRequestException('Name cannot be null');
@@ -42,10 +45,14 @@ export class AuthService {
       const response = await client.send(command);
 
       if (response.$metadata.httpStatusCode === 200) {
-        return {
-          email: signupAuthDto.email,
+        const data = {
           name: signupAuthDto.name,
+          email: signupAuthDto.email,
         };
+
+        await this.prisma.user.create({ data });
+
+        return data;
       }
     } catch (error) {
       if (error.$metadata.httpStatusCode === 400) {
@@ -68,6 +75,11 @@ export class AuthService {
     try {
       const response = await client.send(command);
       if (response.$metadata.httpStatusCode === 200) {
+        await this.prisma.user.update({
+          where: { email: verifyAuthDto.email },
+          data: { emailVerified: true },
+        });
+
         return response;
       }
     } catch (error) {
@@ -122,11 +134,23 @@ export class AuthService {
       const response = await client.send(command);
 
       if (response.$metadata.httpStatusCode === 200) {
-        // TODO: Put refresh token to user, Get from db
-        const user = {
-          name: 'Thanh',
-          email: 'Test',
-        };
+        const user = await this.prisma.user.findUnique({
+          where: { email: signinAuthDto.email },
+        });
+
+        try {
+          if (user) {
+            await this.prisma.user.update({
+              where: { email: signinAuthDto.email },
+              data: {
+                refreshToken: response.AuthenticationResult.RefreshToken,
+              },
+            });
+          }
+        } catch (error) {
+          throw new Error(error);
+        }
+
         return {
           accessToken: response.AuthenticationResult.AccessToken,
           expiresIn: response.AuthenticationResult.ExpiresIn,
