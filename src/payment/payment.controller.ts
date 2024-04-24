@@ -8,6 +8,7 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
+  // lấy client secret
   @Post()
   @ApiCreatedResponse({ description: 'Request sent' })
   async payment(@Body() paymentDto: PaymentDto) {
@@ -19,4 +20,6 @@ export class PaymentController {
       return { success: false, error: error.message };
     }
   }
+
+  //Todo : lưu amount vs chapter
 }

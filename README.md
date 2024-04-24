@@ -37,7 +37,7 @@ $ npm install
 ```bash
 # generate migration
 $ npx prisma migrate dev
-$ prisma db seed
+$ npx prisma db seed
 
 # start docker
 $ docker compose up

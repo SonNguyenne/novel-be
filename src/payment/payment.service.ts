@@ -13,20 +13,22 @@ export class PaymentService {
     try {
       // TODO: Add transaction to history
       const { token, email, amount, description } = paymentDto;
-      const paymentMethod = await stripe.paymentMethods.create({
-        type: 'card',
-        card: {
-          token: token,
-        },
-      });
+      // const paymentMethod = await stripe.paymentMethods.create({
+      //   type: 'card',
+      //   card: {
+      //     token: token,
+      //   },
+      // });
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
         description,
-        payment_method: paymentMethod.id,
-        confirm: true,
-        return_url: 'http://localhost:3001/api/payment',
+        // payment_method: paymentMethod.id,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        // return_url: 'http://localhost:3001/api/payment',
       });
 
       return paymentIntent;

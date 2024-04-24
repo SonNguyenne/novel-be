@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  const numberRecords = 10;
+  const numberRecords = 50;
 
   for (let i = 0; i < numberRecords; i++) {
     // Category
