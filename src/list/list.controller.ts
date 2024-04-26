@@ -15,8 +15,11 @@ export class ListController {
 
   @Get('/')
   @ApiOkResponse({ description: 'Reading list retrieved successfully' })
-  findAllReading(@Query('classification') classification: string) {
-    return this.listService.findAll(classification);
+  findAllReading(
+    @Query('userId') userId: number,
+    @Query('classification') classification: string,
+  ) {
+    return this.listService.findAll(userId, classification);
   }
 
   @Patch()

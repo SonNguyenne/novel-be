@@ -31,6 +31,4 @@ export class PaymentController {
       return { success: false, error: error.message };
     }
   }
-
-  //Todo : lưu amount vs chapter
 }

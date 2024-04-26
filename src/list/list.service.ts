@@ -7,8 +7,10 @@ import { Classification } from '../enums/classification.enum';
 export class ListService {
   constructor(private prisma: PrismaService) {}
 
-  // TODO: Add filter by userIDs
-  async findAll(@Query('classification') classification: string) {
+  async findAll(
+    @Query('userId') userId: number,
+    @Query('classification') classification: string,
+  ) {
     try {
       classification = classification.toUpperCase();
 
@@ -22,12 +24,16 @@ export class ListService {
       return await this.prisma.list.findMany({
         where: {
           classification,
+          userId: Number(userId),
         },
         select: {
           id: true,
           classification: true,
           userId: true,
-          chapters: classification === Classification.READING ? true : false,
+          chapters:
+            classification === Classification.READING
+              ? { select: { id: true, productId: true, chapterName: true } }
+              : false,
           products: classification === Classification.FAVORITE ? true : false,
         },
       });
@@ -37,11 +43,10 @@ export class ListService {
   }
 
   async update(updateListDto: UpdateListDto) {
-    // TODO: Change user Id to real one
-    const userId = 2;
+    const { userId, classification, chapters, products } = updateListDto;
 
     const existingList = await this.prisma.list.findFirst({
-      where: { userId, classification: updateListDto.classification },
+      where: { userId, classification },
     });
 
     try {
@@ -49,19 +54,19 @@ export class ListService {
         return await this.prisma.list.create({
           data: {
             userId,
-            classification: updateListDto.classification,
+            classification,
             chapters:
-              updateListDto.classification === Classification.READING
+              classification === Classification.READING
                 ? {
-                    connect: updateListDto.chapters.map((chapter) => ({
+                    connect: chapters.map((chapter) => ({
                       id: chapter.id,
                     })),
                   }
                 : undefined,
             products:
-              updateListDto.classification === Classification.FAVORITE
+              classification === Classification.FAVORITE
                 ? {
-                    connect: updateListDto.products.map((product) => ({
+                    connect: products.map((product) => ({
                       id: product.id,
                     })),
                   }
@@ -71,14 +76,8 @@ export class ListService {
             id: true,
             classification: true,
             userId: true,
-            chapters:
-              updateListDto.classification === Classification.READING
-                ? true
-                : false,
-            products:
-              updateListDto.classification === Classification.FAVORITE
-                ? true
-                : false,
+            chapters: classification === Classification.READING ? true : false,
+            products: classification === Classification.FAVORITE ? true : false,
           },
         });
       } else {
@@ -86,21 +85,21 @@ export class ListService {
           where: {
             id: existingList.id,
             userId,
-            classification: updateListDto.classification,
+            classification: classification,
           },
           data: {
             chapters:
-              updateListDto.classification === Classification.READING
+              classification === Classification.READING
                 ? {
-                    set: updateListDto.chapters.map((chapter) => ({
+                    set: chapters.map((chapter) => ({
                       id: chapter.id,
                     })),
                   }
                 : undefined,
             products:
-              updateListDto.classification === Classification.FAVORITE
+              classification === Classification.FAVORITE
                 ? {
-                    set: updateListDto.products.map((product) => ({
+                    set: products.map((product) => ({
                       id: product.id,
                     })),
                   }
@@ -110,14 +109,8 @@ export class ListService {
             id: true,
             classification: true,
             userId: true,
-            chapters:
-              updateListDto.classification === Classification.READING
-                ? true
-                : false,
-            products:
-              updateListDto.classification === Classification.FAVORITE
-                ? true
-                : false,
+            chapters: classification === Classification.READING ? true : false,
+            products: classification === Classification.FAVORITE ? true : false,
           },
         });
       }
