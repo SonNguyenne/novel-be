@@ -141,7 +141,7 @@ async function main() {
     await prisma.paymentHistory.create({
       data: {
         userId: randomUser.id,
-        money: parseFloat(faker.finance.amount(100, 10000, 2)),
+        amount: parseFloat(faker.finance.amount(100, 10000, 2)),
         createdAt: new Date(),
         chapters: {
           connect: randomChapters.map((chapter) => ({ id: chapter.id })),

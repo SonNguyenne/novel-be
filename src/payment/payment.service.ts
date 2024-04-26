@@ -1,7 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { PaymentDto } from './dto/payment.dto';
+import { IntentDto } from './dto/intent.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import Stripe from 'stripe';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY);
 
@@ -9,31 +15,57 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY);
 export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
-  async processPayment(paymentDto: PaymentDto) {
+  async createIntent(intentDto: IntentDto) {
     try {
-      // TODO: Add transaction to history
-      const { token, email, amount, description } = paymentDto;
-      // const paymentMethod = await stripe.paymentMethods.create({
-      //   type: 'card',
-      //   card: {
-      //     token: token,
-      //   },
-      // });
+      const { amount, description } = intentDto;
+
+      if (amount === null || amount === undefined) {
+        throw new Error('Invalid amount');
+      }
+
+      if (amount < 50) {
+        throw new Error('Amount must be at least 50 (~ $ 0.50)');
+      }
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
         description,
-        // payment_method: paymentMethod.id,
         automatic_payment_methods: {
           enabled: true,
         },
-        // return_url: 'http://localhost:3001/api/payment',
       });
 
       return paymentIntent;
     } catch (error) {
-      throw new Error(error.message);
+      throw error;
+    }
+  }
+
+  async storePayment(createPaymentDto: CreatePaymentDto) {
+    const { userId, amount, chapters } = createPaymentDto;
+
+    try {
+      if (!userId) throw new BadRequestException('User ID can not be empty');
+
+      if (!amount) throw new BadRequestException('Amount can not be empty');
+
+      if (!chapters || chapters.length === 0)
+        throw new BadRequestException('Chapters can not be empty');
+
+      const payment = await this.prisma.paymentHistory.create({
+        data: {
+          userId,
+          amount,
+          chapters: {
+            connect: chapters.map((chapter) => ({ id: chapter.id })),
+          },
+        },
+      });
+
+      return payment;
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -110,7 +110,7 @@ model List {
 model PaymentHistory {
   id        Int      @id @default(autoincrement())
   userId    Int
-  money     Float
+  amount    Float
   createdAt DateTime @default(now())
   User      User     @relation(fields: [userId], references: [id])
   chapters   Chapter[]
