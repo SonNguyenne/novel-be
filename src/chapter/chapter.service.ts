@@ -38,7 +38,31 @@ export class ChapterService {
 
   async findAll() {
     try {
-      return await this.prisma.chapter.findMany();
+      const paymentHistories = await this.prisma.paymentHistory.findMany({
+        include: {
+          chapters: true,
+        },
+      });
+
+      const userIdsByChapterId = {};
+
+      paymentHistories.forEach((paymentHistory) => {
+        paymentHistory.chapters.forEach((chapter) => {
+          if (!userIdsByChapterId[chapter.id]) {
+            userIdsByChapterId[chapter.id] = [];
+          }
+          userIdsByChapterId[chapter.id].push(paymentHistory.userId);
+        });
+      });
+
+      const chaptersWithUsers = paymentHistories.flatMap((paymentHistory) =>
+        paymentHistory.chapters.map((chapter) => ({
+          ...chapter,
+          users: userIdsByChapterId[chapter.id] || [],
+        })),
+      );
+
+      return chaptersWithUsers;
     } catch (err) {
       throw new Error(err);
     }
