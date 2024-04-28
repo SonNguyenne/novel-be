@@ -101,6 +101,27 @@ export class ProductService {
     };
   }
 
+  async findOneChapter(id: number, chapterNumber: number) {
+    try {
+      const chapter = await this.prisma.chapter.findFirst({
+        where: {
+          productId: id,
+          chapterNumber,
+        },
+      });
+
+      if (!chapter) {
+        throw new NotFoundException(
+          `Chapter with number ${chapterNumber} not found in product with ID ${id}`,
+        );
+      }
+
+      return chapter;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
   async update(id: number, updateProductDto: UpdateProductDto) {
     const result = await this.prisma.product.findUnique({
       where: { id },

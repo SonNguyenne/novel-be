@@ -43,6 +43,16 @@ export class ProductController {
     return this.productService.findOne(+id);
   }
 
+  @Get(':id/chapter/:chapterNumber')
+  @ApiOkResponse({ description: 'Chapter retrieved successfully' })
+  @ApiNotFoundResponse({ description: 'Not found Chapter' })
+  findOneChapter(
+    @Param('id') id: string,
+    @Param('chapterNumber') chapterNumber: string,
+  ) {
+    return this.productService.findOneChapter(+id, +chapterNumber);
+  }
+
   @Patch(':id')
   @ApiOkResponse({ description: 'Product updated successfully' })
   @ApiBadRequestResponse({ description: 'Invalid input' })
