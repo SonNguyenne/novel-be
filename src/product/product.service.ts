@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { calculateAverageRate } from 'src/utils/calculateAverageRate';
 
 @Injectable()
 export class ProductService {
@@ -47,22 +48,57 @@ export class ProductService {
 
   async findAll() {
     try {
-      return await this.prisma.product.findMany();
+      const products = await this.prisma.product.findMany();
+      const productDetails = await Promise.all(
+        products.map(async (product) => {
+          const rates = await this.prisma.rate.findMany({
+            where: { productId: product.id },
+          });
+
+          const averageRate = calculateAverageRate(rates);
+
+          const chapters = await this.prisma.chapter.findMany({
+            where: { productId: product.id },
+          });
+
+          return {
+            ...product,
+            averageRate: Math.round(averageRate),
+            chapterCount: chapters.length,
+          };
+        }),
+      );
+
+      return productDetails;
     } catch (err) {
       throw new Error(err);
     }
   }
 
   async findOne(id: number) {
-    const result = await this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { id },
+      include: {
+        categories: true,
+      },
     });
 
-    if (!result) {
+    if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
-    return result;
+    const rates = await this.prisma.rate.findMany({ where: { productId: id } });
+    const averageRate = calculateAverageRate(rates);
+
+    const chapters = await this.prisma.chapter.findMany({
+      where: { productId: id },
+    });
+
+    return {
+      ...product,
+      averageRate: Math.round(averageRate),
+      chapterCount: chapters.length,
+    };
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
