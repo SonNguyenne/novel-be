@@ -17,6 +17,11 @@ export class AuthService {
     if (!signupAuthDto.password)
       throw new BadRequestException('Password cannot be null');
 
+    const user = await this.prisma.user.findUnique({
+      where: { email: signupAuthDto.email },
+    });
+    if (user) throw new BadRequestException('Email is existed');
+
     try {
       return await this.prisma.user.create({
         data: {
