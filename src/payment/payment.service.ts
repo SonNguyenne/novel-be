@@ -53,36 +53,53 @@ export class PaymentService {
       if (!chapters || chapters.length === 0)
         throw new BadRequestException('Chapters can not be empty');
 
-      const payment = await this.prisma.paymentHistory.create({
-        data: {
-          userId,
-          amount,
-          chapters: {
-            connect: chapters.map((chapter) => ({ id: chapter.id })),
-          },
-        },
-        include: {
-          chapters: {
-            select: {
-              id: true,
-              users: true,
-            },
-          },
+      const chapter = await this.prisma.chapter.findFirst({
+        where: { id: chapters[0].id },
+        select: {
+          users: true,
         },
       });
 
-      for (const chapter of payment.chapters) {
-        const userExists = chapter.users.includes(userId);
+      if (chapter.users.includes(userId))
+        throw new BadRequestException('User already buy this chapter');
 
-        if (!userExists) {
-          await this.prisma.chapter.update({
-            where: { id: chapter.id },
-            data: {
-              users: [...chapter.users, userId],
-            },
-          });
-        }
-      }
+      const payment = await this.prisma.chapter.update({
+        where: { id: chapters[0].id },
+        data: {
+          users: [...chapter.users, userId],
+        },
+      });
+
+      // const payment = await this.prisma.paymentHistory.create({
+      //   data: {
+      //     userId,
+      //     amount,
+      //     chapters: {
+      //       connect: chapters.map((chapter) => ({ id: chapter.id })),
+      //     },
+      //   },
+      //   include: {
+      //     chapters: {
+      //       select: {
+      //         id: true,
+      //         users: true,
+      //       },
+      //     },
+      //   },
+      // });
+
+      // for (const chapter of payment.chapters) {
+      //   const userExists = chapter.users.includes(userId);
+
+      //   if (!userExists) {
+      //     await this.prisma.chapter.update({
+      //       where: { id: chapter.id },
+      //       data: {
+      //         users: [...chapter.users, userId],
+      //       },
+      //     });
+      //   }
+      // }
 
       return payment;
     } catch (error) {
