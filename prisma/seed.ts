@@ -104,7 +104,8 @@ async function main() {
         chapterName: faker.lorem.words(),
         content: faker.lorem.paragraphs({ min: 100, max: 150 }, '<br/>\n'),
         chapterNumber: (maxChapter?.chapterNumber || 0) + 1, // faker.number.int({ min: 1, max: 1000 })
-        price: parseFloat(faker.finance.amount(10, 100, 2)),
+        price: Math.round(parseFloat(faker.finance.amount(50, 100, 2))),
+        users: [randomUser.id],
       },
     });
 

@@ -61,7 +61,28 @@ export class PaymentService {
             connect: chapters.map((chapter) => ({ id: chapter.id })),
           },
         },
+        include: {
+          chapters: {
+            select: {
+              id: true,
+              users: true,
+            },
+          },
+        },
       });
+
+      for (const chapter of payment.chapters) {
+        const userExists = chapter.users.includes(userId);
+
+        if (!userExists) {
+          await this.prisma.chapter.update({
+            where: { id: chapter.id },
+            data: {
+              users: [...chapter.users, userId],
+            },
+          });
+        }
+      }
 
       return payment;
     } catch (error) {

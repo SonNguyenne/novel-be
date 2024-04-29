@@ -45,8 +45,16 @@ export class ListService {
   async update(updateListDto: UpdateListDto) {
     const { userId, classification, chapters, products } = updateListDto;
 
+    const productDetail = await this.prisma.product.findFirst({
+      where: { id: products[0].id },
+    });
+
     const existingList = await this.prisma.list.findFirst({
       where: { userId, classification },
+      include: {
+        chapters: true,
+        products: true,
+      },
     });
 
     try {
@@ -81,6 +89,9 @@ export class ListService {
           },
         });
       } else {
+        const existedItem = existingList.products
+          .map((v) => v.id)
+          .includes(products[0].id);
         return await this.prisma.list.update({
           where: {
             id: existingList.id,
@@ -99,9 +110,13 @@ export class ListService {
             products:
               classification === Classification.FAVORITE
                 ? {
-                    set: products.map((product) => ({
-                      id: product.id,
-                    })),
+                    set: existedItem
+                      ? [
+                          ...existingList.products.filter(
+                            (v) => v.id !== products[0].id,
+                          ),
+                        ]
+                      : [...existingList.products, productDetail],
                   }
                 : undefined,
           },

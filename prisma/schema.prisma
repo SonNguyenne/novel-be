@@ -52,6 +52,7 @@ model Chapter {
   price         Float?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  users         Int[]
   lists         List[]
   histories     PaymentHistory[]
   Product       Product   @relation(fields: [productId], references: [id])
