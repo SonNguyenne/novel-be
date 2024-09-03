@@ -1,21 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommentController } from './comment.controller';
-import { CommentService } from './comment.service';
-import { PrismaService } from '../../prisma/prisma.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { CommentController } from './comment.controller'
+import { CommentService } from './comment.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 describe('CommentController', () => {
-  let controller: CommentController;
+  let controller: CommentController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommentController],
       providers: [CommentService, PrismaService],
-    }).compile();
+    }).compile()
 
-    controller = module.get<CommentController>(CommentController);
-  });
+    controller = module.get<CommentController>(CommentController)
+  })
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+    expect(controller).toBeDefined()
+  })
+})

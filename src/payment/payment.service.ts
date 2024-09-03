@@ -1,15 +1,10 @@
-import { IntentDto } from './dto/intent.dto';
-import { PrismaService } from '../../prisma/prisma.service';
-import Stripe from 'stripe';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { IntentDto } from './dto/intent.dto'
+import { PrismaService } from 'src/prisma/prisma.service'
+import Stripe from 'stripe'
+import { CreatePaymentDto } from './dto/create-payment.dto'
+import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
-const stripe = new Stripe(process.env.STRIPE_API_KEY);
+const stripe = new Stripe(process.env.STRIPE_API_KEY)
 
 @Injectable()
 export class PaymentService {
@@ -17,14 +12,14 @@ export class PaymentService {
 
   async createIntent(intentDto: IntentDto) {
     try {
-      const { amount, description } = intentDto;
+      const { amount, description } = intentDto
 
       if (amount === null || amount === undefined) {
-        throw new Error('Invalid amount');
+        throw new Error('Invalid amount')
       }
 
       if (amount < 50) {
-        throw new Error('Amount must be at least 50 (~ $ 0.50)');
+        throw new Error('Amount must be at least 50 (~ $ 0.50)')
       }
 
       const paymentIntent = await stripe.paymentIntents.create({
@@ -34,41 +29,39 @@ export class PaymentService {
         automatic_payment_methods: {
           enabled: true,
         },
-      });
+      })
 
-      return paymentIntent;
+      return paymentIntent
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
   async storePayment(createPaymentDto: CreatePaymentDto) {
-    const { userId, amount, chapters } = createPaymentDto;
+    const { userId, amount, chapters } = createPaymentDto
 
     try {
-      if (!userId) throw new BadRequestException('User ID can not be empty');
+      if (!userId) throw new BadRequestException('User ID can not be empty')
 
-      if (!amount) throw new BadRequestException('Amount can not be empty');
+      if (!amount) throw new BadRequestException('Amount can not be empty')
 
-      if (!chapters || chapters.length === 0)
-        throw new BadRequestException('Chapters can not be empty');
+      if (!chapters || chapters.length === 0) throw new BadRequestException('Chapters can not be empty')
 
       const chapter = await this.prisma.chapter.findFirst({
         where: { id: chapters[0].id },
         select: {
           users: true,
         },
-      });
+      })
 
-      if (chapter.users.includes(userId))
-        throw new BadRequestException('User already buy this chapter');
+      if (chapter.users.includes(userId)) throw new BadRequestException('User already buy this chapter')
 
       const payment = await this.prisma.chapter.update({
         where: { id: chapters[0].id },
         data: {
           users: [...chapter.users, userId],
         },
-      });
+      })
 
       // const payment = await this.prisma.paymentHistory.create({
       //   data: {
@@ -101,9 +94,9 @@ export class PaymentService {
       //   }
       // }
 
-      return payment;
+      return payment
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 }

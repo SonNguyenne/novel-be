@@ -1,15 +1,15 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client'
 
-export class Comment implements Prisma.CommentCreateInput {
-  content: string;
+export class Comment {
+  content: string
   User!: {
     connect: {
-      id: number;
-    };
-  };
+      id: number
+    }
+  }
   Product!: {
     connect: {
-      id: number;
-    };
-  };
+      id: number
+    }
+  }
 }

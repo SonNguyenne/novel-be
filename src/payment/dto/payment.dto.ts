@@ -1,10 +1,10 @@
-import { faker } from '@faker-js/faker';
-import { ApiProperty } from '@nestjs/swagger';
-import { InheritChapterDto } from '../../chapter/dto/chapter.dto';
+import { faker } from '@faker-js/faker'
+import { ApiProperty } from '@nestjs/swagger'
+import { InheritChapterDto } from '../../chapter/dto/chapter.dto'
 
 export class PaymentDto {
   @ApiProperty({ required: true, default: 1 })
-  userId: number;
+  userId: number
 
   @ApiProperty({
     required: true,
@@ -13,15 +13,15 @@ export class PaymentDto {
     type: 'number',
     example: faker.finance.amount(50, 100, 0),
   })
-  amount: number;
+  amount: number
 
   @ApiProperty()
   User?: {
     connect: {
-      id: number;
-    };
-  };
+      id: number
+    }
+  }
 
   @ApiProperty({ type: () => [InheritChapterDto] })
-  chapters: InheritChapterDto[];
+  chapters: InheritChapterDto[]
 }

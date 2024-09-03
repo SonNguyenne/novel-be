@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client'
 
-export class Category implements Prisma.CategoryCreateInput {
-  id: number;
-  name: string;
-  description?: string;
+export class Category {
+  id: number
+  name: string
+  description?: string
 }

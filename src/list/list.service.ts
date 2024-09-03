@@ -1,24 +1,18 @@
-import { BadRequestException, Injectable, Query } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { UpdateListDto } from './dto/update-list.dto';
-import { Classification } from '../enums/classification.enum';
+import { BadRequestException, Injectable, Query } from '@nestjs/common'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { UpdateListDto } from './dto/update-list.dto'
+import { Classification } from '../enums/classification.enum'
 
 @Injectable()
 export class ListService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(
-    @Query('userId') userId: number,
-    @Query('classification') classification: string,
-  ) {
+  async findAll(@Query('userId') userId: number, @Query('classification') classification: string) {
     try {
-      classification = classification.toUpperCase();
+      classification = classification.toUpperCase()
 
-      if (
-        classification !== Classification.FAVORITE &&
-        classification !== Classification.READING
-      ) {
-        throw new BadRequestException('Invalid classification provided');
+      if (classification !== Classification.FAVORITE && classification !== Classification.READING) {
+        throw new BadRequestException('Invalid classification provided')
       }
 
       return await this.prisma.list.findMany({
@@ -36,18 +30,18 @@ export class ListService {
               : false,
           products: classification === Classification.FAVORITE ? true : false,
         },
-      });
+      })
     } catch (err) {
-      throw err;
+      throw err
     }
   }
 
   async update(updateListDto: UpdateListDto) {
-    const { userId, classification, chapters, products } = updateListDto;
+    const { userId, classification, chapters, products } = updateListDto
 
     const productDetail = await this.prisma.product.findFirst({
       where: { id: products[0].id },
-    });
+    })
 
     const existingList = await this.prisma.list.findFirst({
       where: { userId, classification },
@@ -55,7 +49,7 @@ export class ListService {
         chapters: true,
         products: true,
       },
-    });
+    })
 
     try {
       if (!existingList) {
@@ -66,7 +60,7 @@ export class ListService {
             chapters:
               classification === Classification.READING
                 ? {
-                    connect: chapters.map((chapter) => ({
+                    connect: chapters.map(chapter => ({
                       id: chapter.id,
                     })),
                   }
@@ -74,7 +68,7 @@ export class ListService {
             products:
               classification === Classification.FAVORITE
                 ? {
-                    connect: products.map((product) => ({
+                    connect: products.map(product => ({
                       id: product.id,
                     })),
                   }
@@ -87,11 +81,9 @@ export class ListService {
             chapters: classification === Classification.READING ? true : false,
             products: classification === Classification.FAVORITE ? true : false,
           },
-        });
+        })
       } else {
-        const existedItem = existingList.products
-          .map((v) => v.id)
-          .includes(products[0].id);
+        const existedItem = existingList.products.map(v => v.id).includes(products[0].id)
         return await this.prisma.list.update({
           where: {
             id: existingList.id,
@@ -102,7 +94,7 @@ export class ListService {
             chapters:
               classification === Classification.READING
                 ? {
-                    set: chapters.map((chapter) => ({
+                    set: chapters.map(chapter => ({
                       id: chapter.id,
                     })),
                   }
@@ -111,11 +103,7 @@ export class ListService {
               classification === Classification.FAVORITE
                 ? {
                     set: existedItem
-                      ? [
-                          ...existingList.products.filter(
-                            (v) => v.id !== products[0].id,
-                          ),
-                        ]
+                      ? [...existingList.products.filter(v => v.id !== products[0].id)]
                       : [...existingList.products, productDetail],
                   }
                 : undefined,
@@ -127,10 +115,10 @@ export class ListService {
             chapters: classification === Classification.READING ? true : false,
             products: classification === Classification.FAVORITE ? true : false,
           },
-        });
+        })
       }
     } catch (err) {
-      throw err;
+      throw err
     }
   }
 }

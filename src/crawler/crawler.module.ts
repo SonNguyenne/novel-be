@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { CrawlerService } from './crawler.service';
-import { CrawlerController } from './crawler.controller';
-import { PrismaModule } from 'prisma/prisma.module';
+import { Module } from '@nestjs/common'
+import { CrawlerService } from './crawler.service'
+import { CrawlerController } from './crawler.controller'
+import { PrismaModule } from 'src/prisma/prisma.module'
 
 @Module({
   controllers: [CrawlerController],

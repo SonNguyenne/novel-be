@@ -1,64 +1,64 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { faker } from '@faker-js/faker';
-import { InheritCategoryDto } from '../../category/dto/category.dto';
+import { ApiProperty, PickType } from '@nestjs/swagger'
+import { faker } from '@faker-js/faker'
+import { InheritCategoryDto } from '../../category/dto/category.dto'
 
 export class ProductDto {
   @ApiProperty({ required: false })
-  id?: number;
+  id?: number
 
   @ApiProperty({
     description: 'Name of book',
     example: faker.commerce.productName(),
   })
-  name: string;
+  name: string
 
   @ApiProperty({
     required: false,
     description: 'Description of book',
     example: faker.commerce.productDescription(),
   })
-  description?: string | null;
+  description?: string | null
 
   @ApiProperty({
     description: 'Source of book',
     example: 'Sưu tầm',
   })
-  source: string;
+  source: string
 
   @ApiProperty({
     description: 'Image of book',
     example: faker.image.url(),
   })
-  image: string;
+  image: string
 
   @ApiProperty({
     required: false,
     description: 'Status of book: PROGRESS | DONE',
     example: 'PROGRESS',
   })
-  status?: string;
+  status?: string
 
   @ApiProperty({
     description: 'Author of book',
     example: faker.person.fullName(),
   })
-  authorName: string;
+  authorName: string
 
   @ApiProperty({ required: false, default: 0 })
-  viewCount?: number;
+  viewCount?: number
 
   @ApiProperty({ required: true, default: 1 })
-  userId: number;
+  userId: number
 
   @ApiProperty()
   User?: {
     connect: {
-      id: number;
-    };
-  };
+      id: number
+    }
+  }
 
   @ApiProperty({ type: () => [InheritCategoryDto] })
-  categories: InheritCategoryDto[];
+  categories: InheritCategoryDto[]
 }
 
 export class InheritProductDto extends PickType(ProductDto, ['id']) {}

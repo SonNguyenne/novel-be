@@ -1,14 +1,14 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SigninAuthDto } from './dto/signin-auth.dto';
-import { SignupAuthDto } from './dto/signup-auth.dto';
+import { Controller, Post, Body, HttpCode } from '@nestjs/common'
+import { AuthService } from './auth.service'
+import { SigninAuthDto } from './dto/signin-auth.dto'
+import { SignupAuthDto } from './dto/signup-auth.dto'
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiTags,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 
 @ApiTags('auth')
 @ApiBadRequestResponse({ description: 'Invalid input' })
@@ -20,13 +20,13 @@ export class AuthController {
   @Post('/signup')
   @ApiCreatedResponse({ description: 'Sign up successfully' })
   signup(@Body() signupAuthDto: SignupAuthDto) {
-    return this.authService.signup(signupAuthDto);
+    return this.authService.signup(signupAuthDto)
   }
 
   @Post('/signin')
   @ApiOkResponse({ description: 'Login successful' })
   @HttpCode(200)
   signin(@Body() signinAuthDto: SigninAuthDto) {
-    return this.authService.signin(signinAuthDto);
+    return this.authService.signin(signinAuthDto)
   }
 }

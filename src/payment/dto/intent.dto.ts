@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker';
-import { ApiProperty } from '@nestjs/swagger';
+import { faker } from '@faker-js/faker'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class IntentDto {
   @ApiProperty({
@@ -9,12 +9,12 @@ export class IntentDto {
     minimum: 50,
     example: faker.finance.amount(50, 100, 0),
   })
-  amount: number;
+  amount: number
 
   @ApiProperty({
     required: false,
     description: 'Description',
     example: faker.commerce.productDescription(),
   })
-  description?: string;
+  description?: string
 }

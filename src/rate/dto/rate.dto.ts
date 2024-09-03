@@ -1,23 +1,23 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { faker } from '@faker-js/faker';
+import { ApiProperty, PickType } from '@nestjs/swagger'
+import { faker } from '@faker-js/faker'
 
 export class RateDto {
   @ApiProperty({
     description: 'Id of user',
     example: 1,
   })
-  userId: string;
+  userId: string
 
   @ApiProperty({
     description: 'Id of product',
     example: 1,
   })
-  productId: string;
+  productId: string
   @ApiProperty({
     description: 'Rate for product',
     example: faker.number.int({ min: 1, max: 5 }),
   })
-  rating: number;
+  rating: number
 }
 
 export class UpdateRateDto extends PickType(RateDto, ['rating']) {}

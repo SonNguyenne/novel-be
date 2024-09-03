@@ -38,4 +38,9 @@ lerna-debug.log*
 
 /data
 
-/prisma/migrations
+/prisma/migrations/*
+!/prisma/migrations/initial
+
+yarn.lock
+
+package-lock.json

@@ -1,12 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export class TruyenHdDto {
   @ApiProperty({
     description: 'Link of website',
-    example:
-      'https://truyenhdx.com/truyen/benh-my-nhan-bao-hong-trong-show-tre-em/',
+    example: 'https://truyenhdx.com/truyen/benh-my-nhan-bao-hong-trong-show-tre-em/',
   })
-  uri: string;
+  uri: string
 }
 
 export class TruyenFullDto {
@@ -14,7 +13,7 @@ export class TruyenFullDto {
     description: 'Link of website',
     example: 'https://truyenfull.vn/thap-nien-90-nuoi-chong-tu-tam-be/',
   })
-  uri: string;
+  uri: string
 }
 
 export class ChinaDto {
@@ -22,5 +21,5 @@ export class ChinaDto {
     description: 'Link of website',
     example: 'https://www.jjwxc.net/onebook.php?novelid=2530',
   })
-  uri: string;
+  uri: string
 }

@@ -1,8 +1,8 @@
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { Controller, Post, Body } from '@nestjs/common';
-import { PaymentService } from './payment.service';
-import { IntentDto } from './dto/intent.dto';
-import { CreatePaymentDto } from './dto/create-payment.dto';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { Controller, Post, Body } from '@nestjs/common'
+import { PaymentService } from './payment.service'
+import { IntentDto } from './dto/intent.dto'
+import { CreatePaymentDto } from './dto/create-payment.dto'
 
 @ApiTags('payment')
 @Controller('payment')
@@ -13,10 +13,10 @@ export class PaymentController {
   @ApiCreatedResponse({ description: 'Request sent' })
   async createIntent(@Body() intentDto: IntentDto) {
     try {
-      const paymentResult = await this.paymentService.createIntent(intentDto);
-      return { success: true, paymentResult };
+      const paymentResult = await this.paymentService.createIntent(intentDto)
+      return { success: true, paymentResult }
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.message }
     }
   }
 
@@ -24,11 +24,10 @@ export class PaymentController {
   @ApiCreatedResponse({ description: 'Request sent' })
   async storePayment(@Body() createPaymentDto: CreatePaymentDto) {
     try {
-      const paymentResult =
-        await this.paymentService.storePayment(createPaymentDto);
-      return { success: true, paymentResult };
+      const paymentResult = await this.paymentService.storePayment(createPaymentDto)
+      return { success: true, paymentResult }
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.message }
     }
   }
 }

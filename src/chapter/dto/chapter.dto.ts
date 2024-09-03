@@ -1,46 +1,46 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { faker } from '@faker-js/faker';
+import { ApiProperty, PickType } from '@nestjs/swagger'
+import { faker } from '@faker-js/faker'
 
 export class ChapterDto {
   @ApiProperty({ required: false })
-  id?: number;
+  id?: number
 
   @ApiProperty({ required: true, default: 1 })
-  productId: number;
+  productId: number
 
   @ApiProperty({
     required: true,
     description: 'Name of chapter',
     example: faker.commerce.productName(),
   })
-  chapterName: string;
+  chapterName: string
 
   @ApiProperty({
     required: true,
     description: 'Content of book',
     example: faker.commerce.productDescription(),
   })
-  content: string;
+  content: string
 
   @ApiProperty({
     required: true,
     default: 1,
   })
-  chapterNumber: number;
+  chapterNumber: number
 
   @ApiProperty({
     required: false,
     default: 0,
     example: faker.finance.amount(10, 100, 2),
   })
-  price?: number;
+  price?: number
 
   @ApiProperty()
   Product?: {
     connect: {
-      id: number;
-    };
-  };
+      id: number
+    }
+  }
 }
 
 export class InheritChapterDto extends PickType(ChapterDto, ['id']) {}
