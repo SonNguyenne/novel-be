@@ -15,6 +15,23 @@ export class ProductService {
     if (!createProductDto.status) throw new BadRequestException('Status cannot be null')
     if (!createProductDto.authorName) throw new BadRequestException('Author name cannot be null')
 
+    const userExists = await this.prisma.user.findUnique({
+      where: { id: createProductDto.userId },
+    })
+
+    if (!userExists) throw new BadRequestException('User not found')
+
+    const categoriesExist = await Promise.all(
+      createProductDto.categories.map(async category => {
+        const categoryExists = await this.prisma.category.findUnique({
+          where: { id: category.id },
+        })
+        return !!categoryExists
+      }),
+    )
+
+    if (categoriesExist.includes(false)) throw new BadRequestException('Categories not found')
+
     try {
       return await this.prisma.product.create({
         data: {
