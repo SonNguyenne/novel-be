@@ -31,7 +31,7 @@ export class ChapterDto {
   @ApiProperty({
     required: false,
     default: 0,
-    example: faker.finance.amount(10, 100, 2),
+    example: faker.finance.amount({ min: 10, max: 100, dec: 2 }),
   })
   price?: number
 
