@@ -7,7 +7,7 @@ export class IntentDto {
     description: 'Amount of transaction (must be integer)',
     default: 0,
     minimum: 50,
-    example: faker.finance.amount(50, 100, 0),
+    example: faker.finance.amount({ min: 50, max: 100, dec: 0 }),
   })
   amount: number
 

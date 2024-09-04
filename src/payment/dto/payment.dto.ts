@@ -11,7 +11,7 @@ export class PaymentDto {
     description: 'Amount of the payment',
     minimum: 50,
     type: 'number',
-    example: faker.finance.amount(50, 100, 0),
+    example: faker.finance.amount({ min: 50, max: 100, dec: 0 }),
   })
   amount: number
 
