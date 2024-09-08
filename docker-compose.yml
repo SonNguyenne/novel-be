@@ -4,7 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app 
+    image: novel_app
+    container_name: novel_app
     restart: always
     ports:
       - 3000:3000
@@ -14,8 +15,8 @@ services:
       - .env
 
   postgres:
-    image: postgres:13
-    container_name: postgres
+    image: postgres
+    container_name: novel_postgres
     restart: always
     ports:
       - 5432:5432
@@ -26,4 +27,4 @@ services:
 
 volumes:
   postgres:
-    name: prisma-docker
+    name: novel_volume
