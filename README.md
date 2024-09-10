@@ -24,16 +24,17 @@ $ docker exec -it postgres psql -U postgres
 $ CREATE DATABASE novel_db;
 ```
 
-## Data and Migrations (If needed)
+## Data and Migrations
 
 ```bash
-# create migration
+# create migration to generate table
 $ npx prisma migrate dev
 
-# generate migration
+
+# generate migration (If needed)
 $ npx prisma db seed
 
-# read database
+# read database (If needed)
 $ npx prisma studio
 ```
 
