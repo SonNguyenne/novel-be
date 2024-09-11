@@ -8,6 +8,6 @@ services:
     container_name: novel_app
     restart: always
     ports:
-      - 3000:3000
+      - 3334:3334
     env_file:
       - .env
