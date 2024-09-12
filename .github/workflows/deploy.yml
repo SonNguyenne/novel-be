@@ -12,7 +12,7 @@ jobs:
     steps:
       # Bước 1: Checkout code từ repository
       - name: Checkout code
-        run: git clone https://github.com/SonNguyenne/novel-fe.git
+        run: git clone https://github.com/SonNguyenne/novel-be.git
 
       # Bước 2: Thiết lập Docker Buildx (bằng cách chạy lệnh trực tiếp)
       - name: Set up Docker Buildx
@@ -31,7 +31,6 @@ jobs:
       # Bước 4: Build và Push Docker image
       - name: Build and Push Docker image
         run: |
-          cd novel-fe
           docker compose build app
           docker compose push app
 
