@@ -17,13 +17,13 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/signup')
+  @Post('/register')
   @ApiCreatedResponse({ description: 'Sign up successfully' })
   signup(@Body() signupAuthDto: SignupAuthDto) {
     return this.authService.signup(signupAuthDto)
   }
 
-  @Post('/signin')
+  @Post('/login')
   @ApiOkResponse({ description: 'Login successful' })
   @HttpCode(200)
   signin(@Body() signinAuthDto: SigninAuthDto) {
