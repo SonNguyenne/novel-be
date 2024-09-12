@@ -27,8 +27,8 @@ jobs:
       # Bước 4: Build và Push Docker image
       - name: Build and Push Docker image
         run: |
-          docker compose build app
-          docker compose push app
+          docker-compose build app
+          docker-compose push app
 
   deploy:
     runs-on: ubuntu-latest
