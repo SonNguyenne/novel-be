@@ -25,7 +25,9 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Print working directory
-        run: pwd
+        run: |
+          pwd
+          ls
       # Bước 4: Build và Push Docker image
       - name: Build and Push Docker image
         run: |
