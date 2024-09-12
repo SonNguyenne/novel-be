@@ -27,8 +27,8 @@ jobs:
       # Bước 4: Build và Push Docker image
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/novel:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/novel:latest
+          docker compose build -t ${{ secrets.DOCKERHUB_USERNAME }}/novel:latest .
+          docker compose push ${{ secrets.DOCKERHUB_USERNAME }}/novel:latest
 
   deploy:
     runs-on: ubuntu-latest
