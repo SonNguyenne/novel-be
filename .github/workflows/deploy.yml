@@ -32,8 +32,8 @@ jobs:
       - name: Build and Push Docker image
         run: |
           cd novel-be
-          docker compose build app
-          docker compose push app
+          docker compose -f docker-compose.live.yml build app
+          docker compose -f docker-compose.live.yml push app
 
   deploy:
     runs-on: ubuntu-latest

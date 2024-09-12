@@ -1,0 +1,11 @@
+version: '3.2'
+services:
+  app:
+    image: son29032001/novel:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: novel_app
+    restart: always
+    ports:
+      - 3334:3334
