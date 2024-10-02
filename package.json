@@ -28,6 +28,9 @@
     "prisma:generate": "npx prisma generate",
     "prisma:studio": "npx prisma studio"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
     "@nestjs/common": "^10.0.0",
