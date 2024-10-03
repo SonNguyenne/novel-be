@@ -7,5 +7,6 @@ import { ChapterController } from './chapter.controller'
   controllers: [ChapterController],
   providers: [ChapterService],
   imports: [PrismaModule],
+  exports: [ChapterService],
 })
 export class ChapterModule {}

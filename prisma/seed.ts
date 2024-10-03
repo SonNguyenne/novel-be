@@ -27,7 +27,7 @@ async function main() {
         phone: faker.phone.number(),
         birthdate: faker.date.past(),
         picture: faker.image.avatar(),
-        money: parseFloat(faker.finance.amount(100, 10000, 2)),
+        money: parseFloat(faker.finance.amount({ min: 100, max: 10000, dec: 2 })),
         refreshToken: faker.string.uuid(),
         emailVerified: faker.datatype.boolean(),
       },
@@ -45,7 +45,7 @@ async function main() {
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
         source: faker.internet.url(),
-        image: faker.image.url(),
+        image: faker.image.urlPlaceholder({ format: 'png' }),
         status: faker.helpers.arrayElement(['PROGRESS', 'DONE']),
         authorName: faker.person.fullName(),
         viewCount: faker.number.int({ max: 10000 }),
@@ -99,7 +99,7 @@ async function main() {
         chapterName: faker.lorem.words(),
         content: faker.lorem.paragraphs({ min: 100, max: 150 }, '<br/>\n'),
         chapterNumber: (maxChapter?.chapterNumber || 0) + 1, // faker.number.int({ min: 1, max: 1000 })
-        price: Math.round(parseFloat(faker.finance.amount(50, 100, 2))),
+        price: Math.round(parseFloat(faker.finance.amount({ min: 50, max: 100, dec: 2 }))),
         users: [randomUser.id],
       },
     })
@@ -126,7 +126,7 @@ async function main() {
     await prisma.paymentHistory.create({
       data: {
         userId: randomUser.id,
-        amount: parseFloat(faker.finance.amount(100, 10000, 2)),
+        amount: parseFloat(faker.finance.amount({ min: 100, max: 10000, dec: 2 })),
         createdAt: new Date(),
         chapters: {
           connect: randomChapters.map(chapter => ({ id: chapter.id })),
