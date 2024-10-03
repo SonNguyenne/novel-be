@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module'
   controllers: [RateController],
   providers: [RateService],
   imports: [PrismaModule],
+  exports: [RateModule],
 })
 export class RateModule {}

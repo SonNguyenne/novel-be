@@ -4,6 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { ChapterService } from 'src/chapter/chapter.service'
+import { RateService } from 'src/rate/rate.service'
 
 @ApiTags('product')
 @Controller('product')
@@ -11,6 +12,7 @@ export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly chapterService: ChapterService,
+    private readonly rateService: RateService,
   ) {}
 
   @Post()
@@ -33,8 +35,15 @@ export class ProductController {
     return this.productService.findOne(+id)
   }
 
+  @Get(':id/rate')
+  @ApiOkResponse({ description: 'Rate retrieved successfully' })
+  @ApiNotFoundResponse({ description: 'Not found rate' })
+  async findRate(@Param('id') id: string) {
+    return await this.rateService.findAllByProductId(+id)
+  }
+
   @Get(':id/chapter')
-  @ApiOkResponse({ description: 'Chapter retrieved successfully' })
+  @ApiOkResponse({ description: 'Chapters retrieved successfully' })
   @ApiNotFoundResponse({ description: 'Not found Chapter' })
   async findChapter(@Param('id') id: string) {
     const chapters = await this.chapterService.findAll()
