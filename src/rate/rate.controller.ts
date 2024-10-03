@@ -15,10 +15,10 @@ export class RateController {
     return this.rateService.create(createRateDto)
   }
 
-  @Get(':productId')
+  @Get(':id')
   @ApiOkResponse({ description: 'Rates retrieved successfully' })
-  findAllByProductId(@Param('productId') productId: string) {
-    return this.rateService.findAllByProductId(+productId)
+  findAllByProductId(@Param('id') id: string) {
+    return this.rateService.findOne(+id)
   }
 
   @Patch(':id')

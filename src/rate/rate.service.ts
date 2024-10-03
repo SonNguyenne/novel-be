@@ -33,6 +33,14 @@ export class RateService {
     }
   }
 
+  async findOne(id: number) {
+    try {
+      return await this.prisma.rate.findUnique({ where: { id } })
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
   async update(id: number, updateRateDto: UpdateRateDto) {
     if (!updateRateDto.rating) throw new BadGatewayException('Rating cannot be null')
 
