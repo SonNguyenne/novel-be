@@ -90,7 +90,7 @@ model Comment {
 
 model Rate {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    Int      @unique
   productId Int
   rating    Int
   createdAt DateTime @default(now())
