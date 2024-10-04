@@ -49,8 +49,8 @@ async function main() {
         status: faker.helpers.arrayElement(['PROGRESS', 'DONE']),
         authorName: faker.person.fullName(),
         viewCount: faker.number.int({ max: 10000 }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
+        updatedAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
         categories: {
           connect: randomCategories.map(category => ({ id: category.id })),
         },
@@ -68,8 +68,8 @@ async function main() {
         userId: randomUser.id,
         productId: randomProduct.id,
         content: faker.lorem.paragraph(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
+        updatedAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
       },
     })
 
@@ -79,8 +79,8 @@ async function main() {
         userId: randomUser.id,
         productId: randomProduct.id,
         rating: faker.number.int({ min: 1, max: 5 }),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
+        updatedAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
       },
     })
 
@@ -127,7 +127,7 @@ async function main() {
       data: {
         userId: randomUser.id,
         amount: parseFloat(faker.finance.amount({ min: 100, max: 10000, dec: 2 })),
-        createdAt: new Date(),
+        createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
         chapters: {
           connect: randomChapters.map(chapter => ({ id: chapter.id })),
         },
