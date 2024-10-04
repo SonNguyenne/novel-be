@@ -137,22 +137,14 @@ export class ProductService {
       throw new NotFoundException(`Product with ID ${id} not found`)
     }
 
-    if (!updateProductDto.name) throw new BadRequestException('Name cannot be null')
-    if (!updateProductDto.source) throw new BadRequestException('Source cannot be null')
-    if (!updateProductDto.image) throw new BadRequestException('Image cannot be null')
-    if (!updateProductDto.status) throw new BadRequestException('Status cannot be null')
-    if (!updateProductDto.authorName) throw new BadRequestException('Author name cannot be null')
-
     try {
       return await this.prisma.product.update({
         where: { id },
         data: {
           ...updateProductDto,
-          categories: {
-            set: updateProductDto.categories.map(category => ({
-              id: category.id,
-            })),
-          },
+          categories: updateProductDto.categories
+            ? { set: updateProductDto.categories.map(category => ({ id: category.id })) }
+            : undefined,
         },
       })
     } catch (err) {

@@ -24,6 +24,9 @@ export class ChapterService {
         },
       })
     } catch (err) {
+      if (err.code === 'P2002') {
+        throw new BadRequestException('Chapter number must be unique for this product.')
+      }
       throw new Error(err)
     }
   }
@@ -81,10 +84,6 @@ export class ChapterService {
     if (!result) {
       throw new NotFoundException(`Chapter with ID ${id} not found`)
     }
-
-    if (!updateChapterDto.chapterName) throw new BadRequestException('Name cannot be null')
-    if (!updateChapterDto.content) throw new BadRequestException('Source cannot be null')
-    if (!updateChapterDto.chapterNumber) throw new BadRequestException('Image cannot be null')
 
     try {
       return await this.prisma.chapter.update({

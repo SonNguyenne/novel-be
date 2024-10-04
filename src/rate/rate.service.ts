@@ -56,9 +56,7 @@ export class RateService {
     try {
       return await this.prisma.rate.update({
         where: { id },
-        data: {
-          rating: +updateRateDto.rating,
-        },
+        data: { ...updateRateDto },
       })
     } catch (err) {
       throw new Error(err)
