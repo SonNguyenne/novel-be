@@ -3,6 +3,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger'
 export class CategoryDto {
   @ApiProperty({
     required: false,
+    default: 1,
   })
   id?: number
 

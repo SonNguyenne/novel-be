@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger'
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { CategoryService } from './category.service'
-import { CategoryDto } from './dto/category.dto'
+import { CreateCategoryDto } from './dto/create-category.dto'
 
 @ApiTags('category')
 @Controller('category')
@@ -19,7 +19,7 @@ export class CategoryController {
   @ApiCreatedResponse({ description: 'Category created successfully' })
   @ApiBadRequestResponse({ description: 'Invalid input' })
   @ApiUnprocessableEntityResponse({ description: 'Name is already taken' })
-  async create(@Body() categoryDto: CategoryDto) {
+  async create(@Body() categoryDto: CreateCategoryDto) {
     return await this.categoryService.create(categoryDto)
   }
 
@@ -40,7 +40,7 @@ export class CategoryController {
   @ApiOkResponse({ description: 'Category updated successfully' })
   @ApiBadRequestResponse({ description: 'Invalid input' })
   @ApiUnprocessableEntityResponse({ description: 'Name is already taken' })
-  async update(@Param('id') id: string, @Body() categoryDto: CategoryDto) {
+  async update(@Param('id') id: string, @Body() categoryDto: CreateCategoryDto) {
     return await this.categoryService.update(+id, categoryDto)
   }
 

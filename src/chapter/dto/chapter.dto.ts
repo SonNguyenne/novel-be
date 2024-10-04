@@ -2,7 +2,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger'
 import { faker } from '@faker-js/faker'
 
 export class ChapterDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 1 })
   id?: number
 
   @ApiProperty({ required: true, default: 1 })

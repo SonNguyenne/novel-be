@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import { InheritCategoryDto } from '../../category/dto/category.dto'
 
 export class ProductDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 1 })
   id?: number
 
   @ApiProperty({

@@ -4,7 +4,7 @@ import { InheritProductDto } from '../../product/dto/product.dto'
 import { InheritChapterDto } from '../../chapter/dto/chapter.dto'
 
 export class ListDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 1 })
   id?: number
 
   @ApiProperty({ required: true, default: 1 })
