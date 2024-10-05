@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
 import { CategoryModule } from './category/category.module'
 import { ProductModule } from './product/product.module'
 import { CommentModule } from './comment/comment.module'
@@ -12,6 +13,10 @@ import { PrismaModule } from './prisma/prisma.module'
 
 @Module({
   imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+    }),
     PrismaModule,
     CategoryModule,
     ProductModule,

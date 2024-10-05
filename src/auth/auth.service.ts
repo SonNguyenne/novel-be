@@ -3,64 +3,50 @@ import { SigninAuthDto } from './dto/signin-auth.dto'
 import { SignupAuthDto } from './dto/signup-auth.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
 
   async signup(signupAuthDto: SignupAuthDto) {
-    if (!signupAuthDto.name) throw new BadRequestException('Name cannot be null')
-    if (!signupAuthDto.email) throw new BadRequestException('Email cannot be null')
-    if (!signupAuthDto.password) throw new BadRequestException('Password cannot be null')
+    const { name, email, password } = signupAuthDto
+    if (!name) throw new BadRequestException('Name cannot be null')
+    if (!email) throw new BadRequestException('Email cannot be null')
+    if (!password) throw new BadRequestException('Password cannot be null')
 
-    const user = await this.prisma.user.findUnique({
-      where: { email: signupAuthDto.email },
-    })
+    const user = await this.prisma.user.findUnique({ where: { email } })
     if (user) throw new BadRequestException('Email is existed')
 
-    try {
-      return await this.prisma.user.create({
-        data: {
-          name: signupAuthDto.name,
-          email: signupAuthDto.email,
-          password: bcrypt.hashSync(signupAuthDto.password, Number(process.env.SALT_BCRYPT)),
-        },
-      })
-    } catch (error) {
-      throw error
-    }
+    const hashed = await bcrypt.hash(password, Number(process.env.SALT_BCRYPT))
+
+    return this.prisma.user.create({ data: { name, email, password: hashed } })
   }
 
   async signin(signinAuthDto: SigninAuthDto) {
-    if (!signinAuthDto.email) throw new BadRequestException('Email cannot be null')
-    if (!signinAuthDto.password) throw new BadRequestException('Password cannot be null')
+    const { email, password } = signinAuthDto
 
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { email: signinAuthDto.email },
-      })
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user) throw new BadRequestException('Email is not exist')
 
-      if (!user) {
-        throw new BadRequestException('Email is not exist')
-      }
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) throw new BadRequestException('Invalid password')
 
-      const isPasswordValid = await bcrypt.compare(signinAuthDto.password, user.password)
+    const { password: hashed, ...userWithoutPassword } = user
+    return { access_token: await this.jwt.signAsync(userWithoutPassword) }
+  }
 
-      if (!isPasswordValid) {
-        throw new BadRequestException('Wrong password')
-      }
+  async validateUser(signinAuthDto: SigninAuthDto) {
+    const { email, password } = signinAuthDto
+    const user = await this.prisma.user.findUnique({ where: { email } })
 
-      const { password, ...userWithoutPassword } = user
-      const token = jwt.sign(userWithoutPassword, process.env.JWT_SECRET)
-      return {
-        token,
-        data: {
-          ...userWithoutPassword,
-        },
-      }
-    } catch (error) {
-      throw error
-    }
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) return null
+
+    const { password: hashed, ...userWithoutPassword } = user
+    return userWithoutPassword
   }
 }

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/swagger'
 import { ChapterService } from 'src/chapter/chapter.service'
 import { RateService } from 'src/rate/rate.service'
+import { Authorization } from 'src/auth/auth.guard'
 
 @ApiTags('product')
 @Controller('product')
@@ -79,6 +80,7 @@ export class ProductController {
     return this.productService.remove(+id)
   }
 
+  @Authorization()
   @Post(':id/view')
   @ApiCreatedResponse({ description: 'Product view increase' })
   @ApiNotModifiedResponse({ description: 'View not updated' })
