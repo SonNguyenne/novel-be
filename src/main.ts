@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('Novel API docs')
     .setDescription('The novels API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('auth')
     .addTag('crawler')
     .addTag('product')

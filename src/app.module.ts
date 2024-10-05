@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
-import { CategoryModule } from './category/category.module'
-import { ProductModule } from './product/product.module'
-import { CommentModule } from './comment/comment.module'
-import { RateModule } from './rate/rate.module'
-import { CrawlerModule } from './crawler/crawler.module'
-import { ChapterModule } from './chapter/chapter.module'
-import { ListModule } from './list/list.module'
-import { AuthModule } from './auth/auth.module'
-import { PaymentModule } from './payment/payment.module'
-import { PrismaModule } from './prisma/prisma.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { CategoryModule } from './modules/category/category.module'
+import { ChapterModule } from './modules/chapter/chapter.module'
+import { CommentModule } from './modules/comment/comment.module'
+import { CrawlerModule } from './modules/crawler/crawler.module'
+import { ListModule } from './modules/list/list.module'
+import { PaymentModule } from './modules/payment/payment.module'
+import { PrismaModule } from './modules/prisma/prisma.module'
+import { ProductModule } from './modules/product/product.module'
+import { RateModule } from './modules/rate/rate.module'
 
 @Module({
   imports: [
@@ -17,16 +17,16 @@ import { PrismaModule } from './prisma/prisma.module'
       global: true,
       secret: process.env.JWT_SECRET,
     }),
-    PrismaModule,
-    CategoryModule,
-    ProductModule,
-    CommentModule,
-    RateModule,
-    CrawlerModule,
-    ChapterModule,
-    ListModule,
     AuthModule,
+    CategoryModule,
+    ChapterModule,
+    CommentModule,
+    CrawlerModule,
+    ListModule,
     PaymentModule,
+    PrismaModule,
+    ProductModule,
+    RateModule,
   ],
   controllers: [],
   providers: [],
