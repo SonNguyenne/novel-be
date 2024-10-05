@@ -1,7 +1,8 @@
 import { Controller, Get, Body, Patch, Query } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { ListService } from './list.service'
 import { UpdateListDto } from './list.dto'
+import { GetResponse, PatchResponse } from 'src/common'
 
 @ApiTags('list')
 @Controller('list')
@@ -9,15 +10,13 @@ export class ListController {
   constructor(private readonly listService: ListService) {}
 
   @Get('/')
-  @ApiOkResponse({ description: 'Reading list retrieved successfully' })
+  @GetResponse('List')
   findAllReading(@Query('userId') userId: number, @Query('classification') classification: string) {
     return this.listService.findAll(userId, classification)
   }
 
   @Patch()
-  @ApiOkResponse({ description: 'Updated successfully' })
-  @ApiBadRequestResponse({ description: 'Invalid input' })
-  @ApiNotFoundResponse({ description: 'Not found' })
+  @PatchResponse('List')
   update(@Body() updateListDto: UpdateListDto) {
     return this.listService.update(updateListDto)
   }
