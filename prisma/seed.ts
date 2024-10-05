@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 async function main() {
-  const numberRecords = 50
+  const numberRecords = 2
 
   for (let i = 0; i < numberRecords; i++) {
     // Category
@@ -48,7 +48,7 @@ async function main() {
         image: faker.image.urlPlaceholder({ format: 'png' }),
         status: faker.helpers.arrayElement(['PROGRESS', 'DONE']),
         authorName: faker.person.fullName(),
-        viewCount: faker.number.int({ max: 10000 }),
+        viewCount: 0,
         createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
         updatedAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
         categories: {
@@ -74,13 +74,21 @@ async function main() {
     })
 
     // Rate
+    let uniqueUserId, existingRate
+
+    do {
+      const randomIndex = Math.floor(Math.random() * allUsers.length)
+      uniqueUserId = allUsers[randomIndex].id // Get a random user ID
+      existingRate = await prisma.rate.findUnique({ where: { userId: uniqueUserId } })
+    } while (existingRate)
+
     await prisma.rate.create({
       data: {
-        userId: randomUser.id,
+        userId: uniqueUserId, // Use the unique user ID
         productId: randomProduct.id,
         rating: faker.number.int({ min: 1, max: 5 }),
-        createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
-        updatedAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
+        createdAt: faker.date.between({ from: '2000-01-01', to: new Date() }),
+        updatedAt: faker.date.between({ from: '2000-01-01', to: new Date() }),
       },
     })
 
@@ -98,7 +106,7 @@ async function main() {
         productId: randomProduct.id,
         chapterName: faker.lorem.words(),
         content: faker.lorem.paragraphs({ min: 100, max: 150 }, '<br/>\n'),
-        chapterNumber: (maxChapter?.chapterNumber || 0) + 1, // faker.number.int({ min: 1, max: 1000 })
+        chapterNumber: (maxChapter?.chapterNumber ?? 0) + 1, // Increment from the max or start at 1
         price: Math.round(parseFloat(faker.finance.amount({ min: 50, max: 100, dec: 2 }))),
         users: [randomUser.id],
       },

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
@@ -129,27 +129,19 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const result = await this.prisma.product.findUnique({
+    const result = await this.prisma.product.findUnique({ where: { id } })
+
+    if (!result) throw new NotFoundException(`Product with ID ${id} not found`)
+
+    return await this.prisma.product.update({
       where: { id },
+      data: {
+        ...updateProductDto,
+        categories: updateProductDto.categories
+          ? { set: updateProductDto.categories.map(category => ({ id: category.id })) }
+          : undefined,
+      },
     })
-
-    if (!result) {
-      throw new NotFoundException(`Product with ID ${id} not found`)
-    }
-
-    try {
-      return await this.prisma.product.update({
-        where: { id },
-        data: {
-          ...updateProductDto,
-          categories: updateProductDto.categories
-            ? { set: updateProductDto.categories.map(category => ({ id: category.id })) }
-            : undefined,
-        },
-      })
-    } catch (err) {
-      throw new Error(err)
-    }
   }
 
   async remove(id: number) {
@@ -164,5 +156,42 @@ export class ProductService {
     return this.prisma.product.delete({
       where: { id },
     })
+  }
+
+  async incrementViewCount(id: number) {
+    const product = await this.prisma.product.findUnique({ where: { id } })
+    if (!product) throw new NotFoundException(`Product with ID ${id} not found`)
+
+    const userId = 1 // TODO
+    const now = new Date()
+    const view = await this.prisma.view.findFirst({ where: { productId: id, userId } })
+
+    if (!view) {
+      await this.prisma.product.update({
+        where: { id },
+        data: { viewCount: product.viewCount + 1 },
+      })
+
+      return await this.prisma.view.create({
+        data: { userId, productId: id },
+      })
+    } else {
+      const viewedTime = new Date(view.viewedAt)
+
+      // 30 mins
+      if (now.getTime() - viewedTime.getTime() > 3 * 60 * 1000) {
+        await this.prisma.product.update({
+          where: { id },
+          data: { viewCount: product.viewCount + 1 },
+        })
+
+        return await this.prisma.view.update({
+          where: { id: view.id },
+          data: { viewedAt: now },
+        })
+      }
+    }
+
+    throw new HttpException(`NOT_MODIFIED`, HttpStatus.NOT_MODIFIED)
   }
 }

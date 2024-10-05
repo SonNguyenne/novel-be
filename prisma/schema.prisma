@@ -40,6 +40,7 @@ model Product {
   comments      Comment[]
   rates         Rate[]
   categories    Category[]
+  views         View[]
   User          User            @relation(fields: [userId], references: [id])
 }
 
@@ -77,6 +78,7 @@ model User {
   products      Product[]
   lists         List[]
   payments      PaymentHistory[]
+  views         View[]
 }
 
 model Comment {
@@ -117,4 +119,15 @@ model PaymentHistory {
   createdAt DateTime @default(now())
   User      User     @relation(fields: [userId], references: [id])
   chapters   Chapter[]
+}
+
+model View {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  productId      Int
+  viewedAt       DateTime @default(now())
+  User           User     @relation(fields: [userId], references: [id])
+  Product        Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
 }

@@ -2,7 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductService } from './product.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiNotModifiedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { ChapterService } from 'src/chapter/chapter.service'
 import { RateService } from 'src/rate/rate.service'
 
@@ -70,5 +77,12 @@ export class ProductController {
   @ApiNotFoundResponse({ description: 'Not found product' })
   remove(@Param('id') id: string) {
     return this.productService.remove(+id)
+  }
+
+  @Post(':id/view')
+  @ApiCreatedResponse({ description: 'Product view increase' })
+  @ApiNotModifiedResponse({ description: 'View not updated' })
+  async incrementView(@Param('id') id: string) {
+    return await this.productService.incrementViewCount(+id)
   }
 }

@@ -9,7 +9,6 @@ export class Product {
   status?: string
   price?: number | 0
   authorName: string
-  viewCount?: number | 0
   User!: {
     connect: {
       id: number
