@@ -67,7 +67,7 @@ async function devMigrate() {
         categories: {
           connect: randomCategories.map(category => ({ id: category.id })),
         },
-        userId: randomUser.id,
+        createdBy: randomUser.id,
       },
     })
 
@@ -78,7 +78,7 @@ async function devMigrate() {
     // Comment
     await prisma.comment.create({
       data: {
-        userId: randomUser.id,
+        createdBy: randomUser.id,
         productId: randomProduct.id,
         content: faker.lorem.paragraph(),
         createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
@@ -88,7 +88,7 @@ async function devMigrate() {
 
     await prisma.rate.create({
       data: {
-        userId: randomUser.id,
+        createdBy: randomUser.id,
         productId: randomProduct.id,
         rating: faker.number.int({ min: 1, max: 5 }),
         createdAt: faker.date.between({ from: '2000-01-01', to: new Date() }),
@@ -123,7 +123,7 @@ async function devMigrate() {
 
     await prisma.list.create({
       data: {
-        userId: randomUser.id,
+        createdBy: randomUser.id,
         classification: randomClassification,
         chapters: {
           connect: randomClassification === 'READING' ? randomChapters.map(chapter => ({ id: chapter.id })) : [],
@@ -137,7 +137,7 @@ async function devMigrate() {
     // PaymentHistory
     await prisma.paymentHistory.create({
       data: {
-        userId: randomUser.id,
+        createdBy: randomUser.id,
         amount: parseFloat(faker.finance.amount({ min: 100, max: 10000, dec: 2 })),
         createdAt: faker.date.between({ from: '2000-01-01', to: Date.now() }),
         chapters: {

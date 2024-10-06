@@ -8,7 +8,7 @@ export class ListDto {
   id?: number
 
   @ApiProperty({ required: true, default: 1 })
-  userId: number
+  createdBy: number
 
   @ApiProperty({
     required: true,
@@ -31,4 +31,4 @@ export class ListDto {
   }
 }
 
-export class UpdateListDto extends PickType(ListDto, ['userId', 'classification', 'chapters', 'products']) {}
+export class UpdateListDto extends PickType(ListDto, ['createdBy', 'classification', 'chapters', 'products']) {}

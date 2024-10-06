@@ -15,7 +15,7 @@ export class RateService {
     try {
       return await this.prisma.rate.create({
         data: {
-          userId: +rateDto.userId,
+          createdBy: +rateDto.userId,
           productId: +rateDto.productId,
           rating: +rateDto.rating,
         },

@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNotModifiedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { CreateProductDto, UpdateProductDto } from './product.dto'
-import { Authorization, DeleteResponse, GetResponse, PatchResponse, PostResponse, User } from 'src/common'
+import {
+  Authorization,
+  DeleteResponse,
+  GetResponse,
+  OwnerAuthorization,
+  OwnerGuard,
+  PatchResponse,
+  PostResponse,
+  User,
+} from 'src/common'
 import { ChapterService } from '../chapter/chapter.service'
 import { RateService } from '../rate/rate.service'
 import { ProductService } from './product.service'
-import { ROLE } from 'src/common/enums/role.enum'
 
 @ApiTags('product')
 @Controller('product')
@@ -16,9 +24,9 @@ export class ProductController {
     private readonly rateService: RateService,
   ) {}
 
+  @Authorization()
   @Post()
   @PostResponse('product')
-  @Authorization(ROLE.MANAGER)
   create(@User('id') userId: number, @Body() createProductDto: CreateProductDto) {
     return this.productService.create(userId, createProductDto)
   }
@@ -55,7 +63,7 @@ export class ProductController {
     return this.productService.findOneChapter(+id, +chapterNumber)
   }
 
-  @Authorization()
+  @OwnerAuthorization('product')
   @Patch(':id')
   @PatchResponse('Product')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
@@ -69,7 +77,6 @@ export class ProductController {
     return this.productService.remove(+id)
   }
 
-  @Authorization()
   @Post(':id/view')
   @ApiCreatedResponse({ description: 'Product view increase' })
   @ApiNotModifiedResponse({ description: 'View not updated' })

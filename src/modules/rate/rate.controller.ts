@@ -9,6 +9,7 @@ import { Authorization, DeleteResponse, GetResponse, PatchResponse, PostResponse
 export class RateController {
   constructor(private readonly rateService: RateService) {}
 
+  @Authorization()
   @Post()
   @PostResponse('Rate')
   create(@Body() createRateDto: RateDto) {
@@ -21,12 +22,14 @@ export class RateController {
     return this.rateService.findOne(+id)
   }
 
+  @Authorization()
   @Patch(':id')
   @PatchResponse('Rate')
   update(@Param('id') id: string, @Body() updateRateDto: UpdateRateDto) {
     return this.rateService.update(+id, updateRateDto)
   }
 
+  @Authorization()
   @Delete(':id')
   @DeleteResponse('Rate')
   remove(@Param('id') id: string) {
