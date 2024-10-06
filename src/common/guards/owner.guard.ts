@@ -16,10 +16,14 @@ export function OwnerGuard(resourceName: string): Type<CanActivate> {
 
       const resource = await this.prisma[resourceName].findUnique({
         where: { id: Number(resourceId) },
-        select: { userId: true },
+        select: { createdBy: true },
       })
 
-      if (!resource || resource.createdBy !== user.id || !resource.collabrations.includes(user.id)) {
+      if (
+        !resource ||
+        resource.createdBy !== user.id ||
+        (resource.collabrations && !resource.collabrations.includes(user.id))
+      ) {
         throw new ForbiddenException('You dont have permission to edit this resource')
       }
 

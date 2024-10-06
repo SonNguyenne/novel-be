@@ -136,7 +136,7 @@ model PaymentHistory {
 model View {
   id             Int      @id @default(autoincrement())
   productId      Int
-  userId      Int
+  userId         Int
   viewedAt       DateTime @default(now())
   User           User     @relation(fields: [userId], references: [id])
   Product        Product  @relation(fields: [productId], references: [id])
