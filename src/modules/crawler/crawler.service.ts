@@ -1,6 +1,6 @@
 import * as he from 'he'
 import { aiTranslate, crawling } from 'src/common/utils'
-import { Status } from 'src/common'
+import { STATUS } from 'src/common'
 import { ChinaDto, TruyenFullDto, TruyenHdDto } from './crawler.dto'
 import { ChapterInterface, ProductInterface } from './interface'
 
@@ -20,7 +20,7 @@ export class CrawlerService {
         const chapterCount = $('a[href="#dsc"] span').text().trim()
         const image = $('.book3d img').attr('data-src').trim()
         const status =
-          $('.table-column2.crop-text-1 span').text().trim() == 'Đang Cập Nhật' ? Status.PROGRESS : Status.DONE
+          $('.table-column2.crop-text-1 span').text().trim() == 'Đang Cập Nhật' ? STATUS.PROGRESS : STATUS.DONE
         const description = $('.excerpt-full.hidden').text().trim()
 
         const newStory: ProductInterface = {
@@ -93,7 +93,7 @@ export class CrawlerService {
         const author = $('.info a[itemprop="author"]').text().trim()
         const source = $('.info span.source').text().trim()
         const category = $('.info a[itemprop="genre"]').text().trim()
-        const status = $('.info span.text-primary').text().trim() == 'Đang ra' ? Status.PROGRESS : Status.DONE
+        const status = $('.info span.text-primary').text().trim() == 'Đang ra' ? STATUS.PROGRESS : STATUS.DONE
 
         var chapterCount = 0
         const canCountChapter = $('.l-chapter .l-chapters a').first().attr('title') ? true : false

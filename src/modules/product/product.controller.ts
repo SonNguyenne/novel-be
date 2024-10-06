@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNotModifiedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { CreateProductDto, UpdateProductDto } from './product.dto'
-import { Authorization, DeleteResponse, GetResponse, PatchResponse, PostResponse } from 'src/common'
+import { Authorization, DeleteResponse, GetResponse, PatchResponse, PostResponse, User } from 'src/common'
 import { ChapterService } from '../chapter/chapter.service'
 import { RateService } from '../rate/rate.service'
 import { ProductService } from './product.service'
+import { ROLE } from 'src/common/enums/role.enum'
 
 @ApiTags('product')
 @Controller('product')
@@ -17,8 +18,9 @@ export class ProductController {
 
   @Post()
   @PostResponse('product')
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto)
+  @Authorization(ROLE.MANAGER)
+  create(@User('id') userId: number, @Body() createProductDto: CreateProductDto) {
+    return this.productService.create(userId, createProductDto)
   }
 
   @Get()
@@ -53,12 +55,14 @@ export class ProductController {
     return this.productService.findOneChapter(+id, +chapterNumber)
   }
 
+  @Authorization()
   @Patch(':id')
   @PatchResponse('Product')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto)
   }
 
+  @Authorization()
   @Delete(':id')
   @DeleteResponse('Product')
   remove(@Param('id') id: string) {
@@ -69,7 +73,7 @@ export class ProductController {
   @Post(':id/view')
   @ApiCreatedResponse({ description: 'Product view increase' })
   @ApiNotModifiedResponse({ description: 'View not updated' })
-  async incrementView(@Param('id') id: string) {
-    return await this.productService.incrementViewCount(+id)
+  async incrementView(@User('id') userId: string, @Param('id') id: string) {
+    return await this.productService.incrementViewCount(+userId, +id)
   }
 }

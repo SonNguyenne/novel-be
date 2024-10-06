@@ -1,4 +1,4 @@
-export enum Status {
+export enum STATUS {
   PROGRESS = 'PROGRESS',
   DONE = 'DONE',
 }

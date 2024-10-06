@@ -1,6 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { faker } from '@faker-js/faker'
 import { InheritCategoryDto } from '../category/category.dto'
+import { STATUS } from 'src/common/enums'
 
 export class ProductDto {
   @ApiProperty({ required: false, default: 1 })
@@ -36,7 +37,7 @@ export class ProductDto {
     description: 'Status of book: PROGRESS | DONE',
     example: 'PROGRESS',
   })
-  status?: string
+  status?: STATUS
 
   @ApiProperty({
     description: 'Author of book',
@@ -68,9 +69,7 @@ export class CreateProductDto extends PickType(ProductDto, [
   'description',
   'source',
   'image',
-  'status',
   'authorName',
-  'userId',
   'categories',
 ]) {}
 

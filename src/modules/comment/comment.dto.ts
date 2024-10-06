@@ -1,7 +1,10 @@
 import { faker } from '@faker-js/faker'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 
 export class CommentDto {
+  @ApiProperty({ required: false, default: 1 })
+  id?: number
+
   @ApiProperty({
     description: 'Id of user',
     example: 1,
@@ -20,3 +23,5 @@ export class CommentDto {
   })
   content: string
 }
+
+export class InheritCommentDto extends PickType(CommentDto, ['id']) {}

@@ -2,7 +2,7 @@ import { Controller, Get, Body, Patch, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ListService } from './list.service'
 import { UpdateListDto } from './list.dto'
-import { GetResponse, PatchResponse } from 'src/common'
+import { CLASSIFICATION, GetResponse, PatchResponse } from 'src/common'
 
 @ApiTags('list')
 @Controller('list')
@@ -11,7 +11,7 @@ export class ListController {
 
   @Get('/')
   @GetResponse('List')
-  findAllReading(@Query('userId') userId: number, @Query('classification') classification: string) {
+  findAllReading(@Query('userId') userId: number, @Query('classification') classification: CLASSIFICATION) {
     return this.listService.findAll(userId, classification)
   }
 

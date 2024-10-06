@@ -7,6 +7,19 @@ import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 async function main() {
+  // await devMigrate()
+}
+
+main()
+  .catch(e => {
+    console.error(e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+
+async function devMigrate() {
   const numberRecords = 2
 
   for (let i = 0; i < numberRecords; i++) {
@@ -73,18 +86,9 @@ async function main() {
       },
     })
 
-    // Rate
-    let uniqueUserId, existingRate
-
-    do {
-      const randomIndex = Math.floor(Math.random() * allUsers.length)
-      uniqueUserId = allUsers[randomIndex].id // Get a random user ID
-      existingRate = await prisma.rate.findUnique({ where: { userId: uniqueUserId } })
-    } while (existingRate)
-
     await prisma.rate.create({
       data: {
-        userId: uniqueUserId, // Use the unique user ID
+        userId: randomUser.id,
         productId: randomProduct.id,
         rating: faker.number.int({ min: 1, max: 5 }),
         createdAt: faker.date.between({ from: '2000-01-01', to: new Date() }),
@@ -143,12 +147,3 @@ async function main() {
     })
   }
 }
-
-main()
-  .catch(e => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })

@@ -1,4 +1,4 @@
-export enum Classification {
+export enum CLASSIFICATION {
   READING = 'READING',
   FAVORITE = 'FAVORITE',
 }

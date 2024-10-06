@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Query } from '@nestjs/common'
-import { Classification } from 'src/common'
+import { CLASSIFICATION } from 'src/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { UpdateListDto } from './list.dto'
 
@@ -7,11 +7,9 @@ import { UpdateListDto } from './list.dto'
 export class ListService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(@Query('userId') userId: number, @Query('classification') classification: string) {
+  async findAll(@Query('userId') userId: number, @Query('classification') classification: CLASSIFICATION) {
     try {
-      classification = classification.toUpperCase()
-
-      if (classification !== Classification.FAVORITE && classification !== Classification.READING) {
+      if (classification !== CLASSIFICATION.FAVORITE && classification !== CLASSIFICATION.READING) {
         throw new BadRequestException('Invalid classification provided')
       }
 
@@ -25,10 +23,10 @@ export class ListService {
           classification: true,
           userId: true,
           chapters:
-            classification === Classification.READING
+            classification === CLASSIFICATION.READING
               ? { select: { id: true, productId: true, chapterName: true } }
               : false,
-          products: classification === Classification.FAVORITE ? true : false,
+          products: classification === CLASSIFICATION.FAVORITE ? true : false,
         },
       })
     } catch (err) {
@@ -58,7 +56,7 @@ export class ListService {
             userId,
             classification,
             chapters:
-              classification === Classification.READING
+              classification === CLASSIFICATION.READING
                 ? {
                     connect: chapters.map(chapter => ({
                       id: chapter.id,
@@ -66,7 +64,7 @@ export class ListService {
                   }
                 : undefined,
             products:
-              classification === Classification.FAVORITE
+              classification === CLASSIFICATION.FAVORITE
                 ? {
                     connect: products.map(product => ({
                       id: product.id,
@@ -78,8 +76,8 @@ export class ListService {
             id: true,
             classification: true,
             userId: true,
-            chapters: classification === Classification.READING ? true : false,
-            products: classification === Classification.FAVORITE ? true : false,
+            chapters: classification === CLASSIFICATION.READING ? true : false,
+            products: classification === CLASSIFICATION.FAVORITE ? true : false,
           },
         })
       } else {
@@ -92,7 +90,7 @@ export class ListService {
           },
           data: {
             chapters:
-              classification === Classification.READING
+              classification === CLASSIFICATION.READING
                 ? {
                     set: chapters.map(chapter => ({
                       id: chapter.id,
@@ -100,7 +98,7 @@ export class ListService {
                   }
                 : undefined,
             products:
-              classification === Classification.FAVORITE
+              classification === CLASSIFICATION.FAVORITE
                 ? {
                     set: existedItem
                       ? [...existingList.products.filter(v => v.id !== products[0].id)]
@@ -112,8 +110,8 @@ export class ListService {
             id: true,
             classification: true,
             userId: true,
-            chapters: classification === Classification.READING ? true : false,
-            products: classification === Classification.FAVORITE ? true : false,
+            chapters: classification === CLASSIFICATION.READING ? true : false,
+            products: classification === CLASSIFICATION.FAVORITE ? true : false,
           },
         })
       }

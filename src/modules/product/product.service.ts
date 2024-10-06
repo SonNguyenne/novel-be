@@ -7,21 +7,22 @@ import { CreateProductDto, UpdateProductDto } from './product.dto'
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
-    if (!createProductDto.name) throw new BadRequestException('Name cannot be null')
-    if (!createProductDto.source) throw new BadRequestException('Source cannot be null')
-    if (!createProductDto.image) throw new BadRequestException('Image cannot be null')
-    if (!createProductDto.status) throw new BadRequestException('Status cannot be null')
-    if (!createProductDto.authorName) throw new BadRequestException('Author name cannot be null')
+  async create(userId: number, createProductDto: CreateProductDto) {
+    const { name, source, image, description, authorName, categories } = createProductDto
+
+    if (!name) throw new BadRequestException('Name cannot be null')
+    if (!source) throw new BadRequestException('Source cannot be null')
+    if (!image) throw new BadRequestException('Image cannot be null')
+    if (!authorName) throw new BadRequestException('Author name cannot be null')
 
     const userExists = await this.prisma.user.findUnique({
-      where: { id: createProductDto.userId },
+      where: { id: userId },
     })
 
     if (!userExists) throw new BadRequestException('User not found')
 
     const categoriesExist = await Promise.all(
-      createProductDto.categories.map(async category => {
+      categories.map(async category => {
         const categoryExists = await this.prisma.category.findUnique({
           where: { id: category.id },
         })
@@ -34,13 +35,12 @@ export class ProductService {
     try {
       return await this.prisma.product.create({
         data: {
-          name: createProductDto.name.trim(),
-          description: createProductDto.description.trim(),
-          source: createProductDto.source.trim(),
-          image: createProductDto.image.trim(),
-          status: createProductDto.status.trim(),
-          authorName: createProductDto.authorName.trim(),
-          userId: createProductDto.userId,
+          name: name.trim(),
+          description: description.trim(),
+          source: source.trim(),
+          image: image.trim(),
+          authorName: authorName.trim(),
+          userId,
           categories: {
             connect: createProductDto.categories.map(category => ({
               id: category.id,
@@ -128,6 +128,7 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    // TODO: Only owner can update
     const result = await this.prisma.product.findUnique({ where: { id } })
 
     if (!result) throw new NotFoundException(`Product with ID ${id} not found`)
@@ -157,11 +158,10 @@ export class ProductService {
     })
   }
 
-  async incrementViewCount(id: number) {
+  async incrementViewCount(userId: number, id: number) {
     const product = await this.prisma.product.findUnique({ where: { id } })
     if (!product) throw new NotFoundException(`Product with ID ${id} not found`)
 
-    const userId = 1 // TODO
     const now = new Date()
     const view = await this.prisma.view.findFirst({ where: { productId: id, userId } })
 

@@ -16,6 +16,12 @@ enum STATUS {
   DONE
 }
 
+enum ROLE {
+  USER
+  MANAGER
+  ADMIN
+}
+
 model Category {
   id          Int       @id @default(autoincrement())
   name        String    @unique
@@ -30,7 +36,7 @@ model Product {
   name          String
   source        String
   image         String
-  status        String          @default("PROGRESS")
+  status        STATUS          @default(PROGRESS)
   viewCount     Int             @default(0)
   description   String?
   createdAt     DateTime        @default(now())
@@ -63,6 +69,7 @@ model Chapter {
 
 model User {
   id            Int              @id @default(autoincrement())
+  role          ROLE             @default(USER)
   name          String
   email         String           @unique 
   phone         String?
@@ -94,13 +101,15 @@ model Comment {
 
 model Rate {
   id        Int      @id @default(autoincrement())
-  userId    Int      @unique
+  userId    Int      
   productId Int
   rating    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
   User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, productId])
 }
 
 model List {
