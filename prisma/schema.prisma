@@ -27,6 +27,7 @@ model Category {
   name        String    @unique
   description String?
   products    Product[]
+  updatedAt   DateTime   @updatedAt
 }
 
 model Product {
