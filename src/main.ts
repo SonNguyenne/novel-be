@@ -1,10 +1,14 @@
 import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
+import { ValidationPipe } from '@nestjs/common'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
   app.enableCors()
+  app.useGlobalPipes(new ValidationPipe())
+
   const config = new DocumentBuilder()
     .setTitle('Novel API docs')
     .setDescription('The novels API description')
@@ -24,5 +28,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document)
 
   await app.listen(process.env.PORT || 3000)
+  console.log(`\n\x1b[32m🚀 Novel is running at: ${await app.getUrl()}\x1b[0m`)
 }
 bootstrap()
