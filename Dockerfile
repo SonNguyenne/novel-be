@@ -14,7 +14,6 @@ RUN npm install --omit-dev
 # Copy the entire project to the working directory
 COPY . .
 
-RUN npx prisma generate
 RUN npm run build
 
 
@@ -29,9 +28,12 @@ COPY --from=builder /app/prisma ./prisma
 # Set the command to start the application
 EXPOSE 3334
 
-CMD [ "npm", "run", "start:migrate:prod" ]
-#  RUN npx prisma migrate deploy
+# CMD [ "npm", "run", "start:migrate:prod" ]
 
-#  RUN npm run start:prod
+RUN npx prisma generate
+
+RUN npx prisma migrate deploy
+
+RUN npm run start:prod
 
 
