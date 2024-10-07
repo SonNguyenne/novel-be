@@ -29,4 +29,9 @@ COPY --from=builder /app/prisma ./prisma
 # Set the command to start the application
 EXPOSE 3334
 
-CMD [ "npm", "run", "start:migrate:prod" ]
+# CMD [ "npm", "run", "start:migrate:prod" ]
+ RUN npx prisma migrate deploy
+ 
+ RUN npm run start:prod
+
+
