@@ -25,13 +25,14 @@ enum ROLE {
 model Category {
   id          Int       @id @default(autoincrement())
   name        String    @unique
+  image       String?
   description String?
   products    Product[]
+  updatedAt   DateTime   @updatedAt
 }
 
 model Product {
   id            Int             @id @default(autoincrement())
-  userId        Int
   authorName    String
   name          String
   source        String
@@ -39,6 +40,7 @@ model Product {
   status        STATUS          @default(PROGRESS)
   viewCount     Int             @default(0)
   description   String?
+  createdBy     Int
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   lists         List[]
@@ -47,7 +49,8 @@ model Product {
   rates         Rate[]
   categories    Category[]
   views         View[]
-  User          User            @relation(fields: [userId], references: [id])
+  User          User            @relation(fields: [createdBy], references: [id])
+  collabrations Collabration[]
 }
 
 model Chapter {
@@ -86,51 +89,64 @@ model User {
   lists         List[]
   payments      PaymentHistory[]
   views         View[]
+  collabrations Collabration[]
+  
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  userId    Int
   productId Int
   content   String
+  createdBy Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [createdBy], references: [id])
 }
 
 model Rate {
   id        Int      @id @default(autoincrement())
-  userId    Int      
   productId Int
   rating    Int
+  createdBy Int      
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [createdBy], references: [id])
 
-  @@unique([userId, productId])
+  @@unique([createdBy, productId])
 }
 
 model List {
   id             Int      @id @default(autoincrement())
   classification String
-  userId         Int
-  User           User     @relation(fields: [userId], references: [id])
+  createdBy      Int
+  User           User     @relation(fields: [createdBy], references: [id])
   chapters       Chapter[]
   products       Product[]
 }
 
 model PaymentHistory {
   id        Int      @id @default(autoincrement())
-  userId    Int
   amount    Float
+  createdBy Int
   createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [createdBy], references: [id])
   chapters   Chapter[]
 }
 
 model View {
+  id             Int      @id @default(autoincrement())
+  productId      Int
+  userId         Int
+  viewedAt       DateTime @default(now())
+  User           User     @relation(fields: [userId], references: [id])
+  Product        Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Collabration {
   id             Int      @id @default(autoincrement())
   userId         Int
   productId      Int

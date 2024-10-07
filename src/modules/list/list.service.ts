@@ -16,12 +16,12 @@ export class ListService {
       return await this.prisma.list.findMany({
         where: {
           classification,
-          userId: Number(userId),
+          createdBy: Number(userId),
         },
         select: {
           id: true,
           classification: true,
-          userId: true,
+          createdBy: true,
           chapters:
             classification === CLASSIFICATION.READING
               ? { select: { id: true, productId: true, chapterName: true } }
@@ -35,14 +35,14 @@ export class ListService {
   }
 
   async update(updateListDto: UpdateListDto) {
-    const { userId, classification, chapters, products } = updateListDto
+    const { createdBy, classification, chapters, products } = updateListDto
 
     const productDetail = await this.prisma.product.findFirst({
       where: { id: products[0].id },
     })
 
     const existingList = await this.prisma.list.findFirst({
-      where: { userId, classification },
+      where: { createdBy, classification },
       include: {
         chapters: true,
         products: true,
@@ -53,7 +53,7 @@ export class ListService {
       if (!existingList) {
         return await this.prisma.list.create({
           data: {
-            userId,
+            createdBy,
             classification,
             chapters:
               classification === CLASSIFICATION.READING
@@ -75,7 +75,7 @@ export class ListService {
           select: {
             id: true,
             classification: true,
-            userId: true,
+            createdBy: true,
             chapters: classification === CLASSIFICATION.READING ? true : false,
             products: classification === CLASSIFICATION.FAVORITE ? true : false,
           },
@@ -85,7 +85,7 @@ export class ListService {
         return await this.prisma.list.update({
           where: {
             id: existingList.id,
-            userId,
+            createdBy,
             classification: classification,
           },
           data: {
@@ -109,7 +109,7 @@ export class ListService {
           select: {
             id: true,
             classification: true,
-            userId: true,
+            createdBy: true,
             chapters: classification === CLASSIFICATION.READING ? true : false,
             products: classification === CLASSIFICATION.FAVORITE ? true : false,
           },

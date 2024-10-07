@@ -2,13 +2,14 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { Controller, Post, Body } from '@nestjs/common'
 import { CreatePaymentDto, IntentDto } from './payment.dto'
 import { PaymentService } from './payment.service'
-import { PostResponse } from 'src/common'
+import { Authorization, PostResponse } from 'src/common'
 
 @ApiTags('payment')
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
+  @Authorization()
   @Post('/createIntent')
   @PostResponse('Request')
   @ApiCreatedResponse({ description: 'Request sent' })
@@ -21,6 +22,7 @@ export class PaymentController {
     }
   }
 
+  @Authorization()
   @Post()
   @PostResponse('Request')
   async storePayment(@Body() createPaymentDto: CreatePaymentDto) {

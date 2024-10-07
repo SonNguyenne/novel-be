@@ -40,7 +40,7 @@ export class ProductService {
           source: source.trim(),
           image: image.trim(),
           authorName: authorName.trim(),
-          userId,
+          createdBy: userId,
           categories: {
             connect: createProductDto.categories.map(category => ({
               id: category.id,

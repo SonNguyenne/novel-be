@@ -12,7 +12,7 @@ export class CommentService {
     try {
       return await this.prisma.comment.create({
         data: {
-          userId: +commentDto.userId,
+          createdBy: +commentDto.userId,
           productId: +commentDto.productId,
           content: commentDto.content.trim(),
         },

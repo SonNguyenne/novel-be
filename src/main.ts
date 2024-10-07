@@ -28,6 +28,5 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document)
 
   await app.listen(process.env.PORT || 3000)
-  console.log(`\n\x1b[32m🚀 Novel is running at: ${await app.getUrl()}\x1b[0m`)
 }
 bootstrap()

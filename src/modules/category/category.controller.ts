@@ -1,15 +1,16 @@
-import { ApiTags, ApiUnprocessableEntityResponse } from '@nestjs/swagger'
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
 import { CategoryService } from './category.service'
 import { CreateCategoryDto } from './category.dto'
 import { Authorization, DeleteResponse, GetResponse, PatchResponse, PostResponse } from 'src/common'
+import { ROLE } from 'src/common/enums/role.enum'
 
 @ApiTags('category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Authorization()
+  @Authorization(ROLE.MANAGER)
   @Post()
   @PostResponse('Category')
   async create(@Body() categoryDto: CreateCategoryDto) {
@@ -28,14 +29,14 @@ export class CategoryController {
     return await this.categoryService.findOne(+id)
   }
 
-  @Authorization()
+  @Authorization(ROLE.MANAGER)
   @Patch(':id')
   @PatchResponse('Category')
   async update(@Param('id') id: string, @Body() categoryDto: CreateCategoryDto) {
     return await this.categoryService.update(+id, categoryDto)
   }
 
-  @Authorization()
+  @Authorization(ROLE.MANAGER)
   @Delete(':id')
   @DeleteResponse('Category')
   async remove(@Param('id') id: string) {
