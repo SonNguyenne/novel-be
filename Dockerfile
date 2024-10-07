@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json first
 COPY package*.json ./
+COPY prisma ./prisma
 
 # Install dependencies without dev dependencies
 RUN npm install --omit-dev
