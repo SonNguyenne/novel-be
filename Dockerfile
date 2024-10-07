@@ -9,8 +9,8 @@ RUN npm install --omit-dev
 
 COPY . .
 
-RUN npm run build
 RUN npx run prisma generate
+RUN npm run build
 
 FROM node:20
 
