@@ -13,11 +13,9 @@ RUN npm install --omit-dev
 # Copy the entire project to the working directory
 COPY . .
 
-# Run the build command
+RUN npx prisma generate
 RUN npm run build
 
-# Generate Prisma client
-RUN npx prisma generate
 
 FROM node:20
 
