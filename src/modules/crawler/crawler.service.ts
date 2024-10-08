@@ -1,7 +1,7 @@
 import * as he from 'he'
 import { aiTranslate, crawling } from 'src/common/utils'
 import { STATUS } from 'src/common'
-import { ChinaDto, TruyenFullDto, TruyenHdDto } from './crawler.dto'
+import { JjwrcDto, TruyenFullDto, TruyenHdDto } from './crawler.dto'
 import { ChapterInterface, ProductInterface } from './interface'
 
 export class CrawlerService {
@@ -163,8 +163,6 @@ export class CrawlerService {
                   content: he.decode(element.html()),
                   chapterNumber: i,
                 }
-                console.log('-----------------chapter-----------------')
-                console.log(chapter)
                 result.chapters.push(chapter)
               }
             })
@@ -179,7 +177,7 @@ export class CrawlerService {
     }
   }
 
-  async fromChina(crawlerDto: ChinaDto) {
+  async fromJjwrc(crawlerDto: JjwrcDto) {
     try {
       const result: ProductInterface = await crawling(crawlerDto.uri, async ($: cheerio.CheerioAPI) => {
         // Check last character of uri

@@ -16,7 +16,7 @@ export class TruyenFullDto {
   uri: string
 }
 
-export class ChinaDto {
+export class JjwrcDto {
   @ApiProperty({
     description: 'Link of website',
     example: 'https://www.jjwxc.net/onebook.php?novelid=2530',
