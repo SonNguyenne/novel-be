@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 async function main() {
-  // await devMigrate()
+  // await devMigrate(50)
 }
 
 main()
@@ -19,9 +19,7 @@ main()
     await prisma.$disconnect()
   })
 
-async function devMigrate() {
-  const numberRecords = 2
-
+async function devMigrate(numberRecords: number) {
   for (let i = 0; i < numberRecords; i++) {
     // Category
     await prisma.category.create({

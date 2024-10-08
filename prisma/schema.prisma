@@ -25,6 +25,7 @@ enum ROLE {
 model Category {
   id          Int       @id @default(autoincrement())
   name        String    @unique
+  image       String?
   description String?
   products    Product[]
   updatedAt   DateTime   @updatedAt

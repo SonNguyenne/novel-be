@@ -6,7 +6,7 @@ Application running by NestJS and PostgreSQL
 
 ```bash
 # Copy env variables
-$ cp .env.dev .env
+$ cp .env.template .env
 ```
 
 ## Database
@@ -30,12 +30,21 @@ $ CREATE DATABASE novel_db;
 # create migration to generate table
 $ npx prisma migrate dev
 
-
-# generate migration (If needed)
+# generate seed (If needed)
 $ npx prisma db seed
 
 # read database (If needed)
 $ npx prisma studio
+```
+
+### Notes
+
+```bash
+# If you gonna change schema then you need run
+$ npx prisma migrate dev
+# or
+$ npx prisma migrate dev --name ${name-migration}
+# Then push the prisma/migration with source
 ```
 
 ## Running the app

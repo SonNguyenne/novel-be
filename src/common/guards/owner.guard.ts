@@ -10,7 +10,7 @@ export function OwnerGuard(resourceName: string): Type<CanActivate> {
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest()
       const user = request.user
-      if (user && user.role === ROLE.ADMIN) return true
+      if (user && (user.role === ROLE.ADMIN || user.role === ROLE.MANAGER)) return true
 
       const resourceId = request.params.id
 
