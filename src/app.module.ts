@@ -10,7 +10,6 @@ import { PaymentModule } from './modules/payment/payment.module'
 import { PrismaModule } from './modules/prisma/prisma.module'
 import { ProductModule } from './modules/product/product.module'
 import { RateModule } from './modules/rate/rate.module'
-import { FileModule } from './modules/file/file.module'
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { FileModule } from './modules/file/file.module'
     PrismaModule,
     ProductModule,
     RateModule,
-    FileModule,
   ],
   controllers: [],
   providers: [],
