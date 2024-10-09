@@ -10,9 +10,9 @@ export class FileService {
 
   constructor() {
     this.minioClient = new Minio.Client({
-      endPoint: 'minio',
-      port: 9000,
-      useSSL: false,
+      endPoint: process.env.MINIO_ENDPOINT,
+      port: Number(process.env.MINIO_PORT) || 9001,
+      useSSL: process.env.MINIO_USE_SSL === 'true' ? true : false,
       accessKey: process.env.MINIO_ACCESS_KEY,
       secretKey: process.env.MINIO_SECRET_KEY,
     })
@@ -84,12 +84,17 @@ export class FileService {
     }
   }
 
-  async getPresignedUrl(bucket: string, fileName: string): Promise<string> {
+  async getPresignedUrl(bucket: string, fileName: string): Promise<{ url: string; publicUrl: string }> {
     try {
       //expired in seconds
-      const expiryTime = 60
-      const url = await this.minioClient.presignedUrl('GET', bucket, fileName, expiryTime)
-      return url
+      // const expiryTime = 60
+      const url = await this.minioClient.presignedUrl('GET', bucket, fileName)
+      console.log('Presigned URL[[[[[[[[[[>]]]]]]]]]]:', this.minioClient)
+      const protocol = this.minioClient['protocol'] || 'http:'
+      const host = this.minioClient['host']
+      const port = this.minioClient['port']
+      const publicUrl = protocol + '//' + host + ':' + port + '/' + bucket + '/' + fileName
+      return { url, publicUrl }
     } catch (err) {
       console.error('Error generating presigned URL:', err)
       throw new BadRequestException('Error generating presigned URL')
