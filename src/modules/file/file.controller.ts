@@ -69,7 +69,10 @@ export class FileController {
   }
 
   @Get('/:bucket/download/:fileName/link')
-  async getLink(@Param('bucket') bucket: string, @Param('fileName') fileName: string): Promise<string> {
+  async getLink(
+    @Param('bucket') bucket: string,
+    @Param('fileName') fileName: string,
+  ): Promise<{ url: string; publicUrl: string }> {
     return await this.fileService.getPresignedUrl(bucket, fileName)
   }
 }
