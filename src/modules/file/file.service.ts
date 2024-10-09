@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { Response } from 'express'
 import * as Minio from 'minio'
 
-const bucket = 'photos'
+const bucket = 'readordead'
 
 @Injectable()
 export class FileService {
@@ -15,6 +15,7 @@ export class FileService {
       useSSL: process.env.MINIO_USE_SSL === 'true' ? true : false,
       accessKey: process.env.MINIO_ACCESS_KEY,
       secretKey: process.env.MINIO_SECRET_KEY,
+      region: 'us-east-1', // Set the region to us-east-1 or your specific region
     })
   }
 
@@ -25,7 +26,7 @@ export class FileService {
       // Check if the bucket exists, if not, create it
       const bucketExists = await this.minioClient.bucketExists(bucket)
       if (!bucketExists) {
-        await this.minioClient.makeBucket(bucket, 'us-east-1')
+        await this.minioClient.makeBucket(bucket)
         console.log('Bucket created successfully in "us-east-1".')
       }
 
