@@ -10,6 +10,7 @@ import {
   UploadedFiles,
   ParseFilePipe,
   FileTypeValidator,
+  Ip,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNotModifiedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { CreateProductDto, UpdateProductDto } from './product.dto'
@@ -17,8 +18,8 @@ import {
   Authorization,
   DeleteResponse,
   GetResponse,
+  IpGuard,
   OwnerAuthorization,
-  OwnerGuard,
   PatchResponse,
   PostResponse,
   Upload,
@@ -93,10 +94,12 @@ export class ProductController {
   }
 
   @Post(':id/view')
-  @ApiCreatedResponse({ description: 'Product view increase' })
+  @UseGuards(IpGuard)
+  @ApiCreatedResponse({ description: 'Product view increased' })
   @ApiNotModifiedResponse({ description: 'View not updated' })
-  async incrementView(@User('id') userId: string, @Param('id') id: string) {
-    return await this.productService.incrementViewCount(+userId, +id)
+  async incrementView(@User('id') userId: string, @Param('id') id: string, @Ip() ip: string) {
+    console.log(+id, ip, userId ? +userId : null)
+    return await this.productService.incrementViewCount(+id, ip, userId ? +userId : null)
   }
 
   @Post(':id/upload')

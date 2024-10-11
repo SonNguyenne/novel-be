@@ -1,6 +1,14 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { faker } from '@faker-js/faker'
 
+function _generateHtmlContent(paragraphCount: number): string {
+  const paragraphs = []
+  for (let i = 0; i < paragraphCount; i++) {
+    paragraphs.push(`<p>${faker.lorem.paragraph()}</p>`)
+  }
+  return paragraphs.join('<br />')
+}
+
 export class ChapterDto {
   @ApiProperty({ required: false, default: 1 })
   id?: number
@@ -18,7 +26,7 @@ export class ChapterDto {
   @ApiProperty({
     required: true,
     description: 'Content of book',
-    example: faker.commerce.productDescription(),
+    example: _generateHtmlContent(50),
   })
   content: string
 

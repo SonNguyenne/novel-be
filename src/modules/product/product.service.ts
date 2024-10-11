@@ -1,5 +1,5 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { calculateAverageRate } from 'src/common/utils'
+import { calculateAverageRate, stripHtml } from 'src/common/utils'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateProductDto, UpdateProductDto } from './product.dto'
 
@@ -128,7 +128,7 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    // TODO: Only owner can update
+    // TODO: Only owner + collabration can update
     const result = await this.prisma.product.findUnique({ where: { id } })
 
     if (!result) throw new NotFoundException(`Product with ID ${id} not found`)
@@ -158,12 +158,17 @@ export class ProductService {
     })
   }
 
-  async incrementViewCount(userId: number, id: number) {
+  async incrementViewCount(id: number, ip: string, userId?: number) {
     const product = await this.prisma.product.findUnique({ where: { id } })
     if (!product) throw new NotFoundException(`Product with ID ${id} not found`)
 
     const now = new Date()
-    const view = await this.prisma.view.findFirst({ where: { productId: id, userId } })
+    const view = await this.prisma.view.findFirst({
+      where: {
+        productId: id,
+        OR: [{ userId }, { ip }],
+      },
+    })
 
     if (!view) {
       await this.prisma.product.update({
@@ -172,13 +177,19 @@ export class ProductService {
       })
 
       return await this.prisma.view.create({
-        data: { userId, productId: id },
+        data: { userId, ip, productId: id },
       })
     } else {
-      const viewedTime = new Date(view.viewedAt)
+      const chapter = await this.prisma.chapter.findFirst({ where: { productId: id } })
+      if (!chapter) throw new NotFoundException(`Chapter for Product ID ${id} not found`)
 
-      // 30 mins
-      if (now.getTime() - viewedTime.getTime() > 3 * 60 * 1000) {
+      const viewedTime = new Date(view.viewedAt)
+      const plainTextContent = stripHtml(chapter.content)
+      const contentLength = plainTextContent.length
+      const estimatedReadingTime = Math.ceil(contentLength / 200) // time to read (s)
+      const minRequiredTime = estimatedReadingTime * 60 * 1000 // time to read (min)
+
+      if (now.getTime() - viewedTime.getTime() > minRequiredTime) {
         await this.prisma.product.update({
           where: { id },
           data: { viewCount: product.viewCount + 1 },
