@@ -42,7 +42,7 @@ export class FileService {
     const protocol = this.minioClient['protocol'] || 'http:'
     const host = this.minioClient['host']
     const port = this.minioClient['port']
-    return `${protocol}//${host}:${port}/${this.bucket}/${fileName}`
+    return `${protocol}//${host}/${this.bucket}/${fileName}`
   }
 
   async uploadFiles(files: Array<Express.Multer.File>): Promise<IFile[]> {

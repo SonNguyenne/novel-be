@@ -83,7 +83,6 @@ model User {
   refreshToken  String?
   emailVerified Boolean          @default(false)
   createdAt     DateTime         @default(now())
-  test          String?
   comments      Comment[]
   rates         Rate[]
   products      Product[]
