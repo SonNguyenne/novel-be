@@ -33,7 +33,6 @@ export class FileService {
         throw new BadRequestException(`Bucket "${this.bucket}" does not exist.`)
       }
     } catch (err) {
-      console.error('Error checking bucket existence:', err)
       throw new BadRequestException('Error checking bucket existence')
     }
   }
@@ -67,7 +66,6 @@ export class FileService {
 
       return fileInfos
     } catch (error) {
-      console.error('Error during file upload:', error)
       throw new BadRequestException('Error during file upload')
     }
   }

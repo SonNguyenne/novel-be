@@ -1,3 +1,5 @@
+import * as bcrypt from 'bcrypt'
+
 enum ROLE {
   USER = 'USER',
   MANAGER = 'MANAGER',
@@ -12,7 +14,7 @@ export const users = [
     phone: '123-456-7890',
     birthdate: '1985-06-15T00:00:00Z',
     picture: 'https://example.com/pictures/alice.jpg',
-    password: process.env.ADMIN_PASSWORD,
+    password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, Number(process.env.SALT_BCRYPT)),
     money: 1000.5,
     refreshToken: 'refresh_token_example_admin',
     emailVerified: true,
@@ -25,7 +27,7 @@ export const users = [
     phone: '987-654-3210',
     birthdate: '1990-01-25T00:00:00Z',
     picture: 'https://example.com/pictures/bob.jpg',
-    password: process.env.MANAGER_PASSWORD,
+    password: bcrypt.hashSync(process.env.MANAGER_PASSWORD, Number(process.env.SALT_BCRYPT)),
     money: 500.75,
     refreshToken: 'refresh_token_example_manager',
     emailVerified: false,
@@ -38,7 +40,7 @@ export const users = [
     phone: null,
     birthdate: '1995-12-05T00:00:00Z',
     picture: null,
-    password: process.env.USER_PASSWORD,
+    password: bcrypt.hashSync(process.env.USER_PASSWORD, Number(process.env.SALT_BCRYPT)),
     money: 100.0,
     refreshToken: null,
     emailVerified: false,

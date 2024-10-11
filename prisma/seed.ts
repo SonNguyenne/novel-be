@@ -7,41 +7,21 @@ import { categories, users } from './initial'
 
 const prisma = new PrismaClient()
 
-async function main() {
-  for (const category of categories) {
-    await prisma.category.upsert({
-      where: { name: category.name },
-      update: { description: category.description },
-      create: {
-        name: category.name,
-        description: category.description,
-      },
-    })
-  }
+export async function seed() {
+  await prisma.category.createMany({
+    data: categories,
+    skipDuplicates: true,
+  })
 
-  for (const user of users) {
-    const hashedPassword = bcrypt.hashSync(user.password, Number(process.env.SALT_BCRYPT))
-    await prisma.user.create({
-      data: {
-        role: user.role,
-        name: user.name,
-        email: user.email,
-        password: hashedPassword,
-        phone: user.phone,
-        birthdate: user.birthdate,
-        picture: user.picture,
-        money: user.money,
-        refreshToken: user.refreshToken,
-        emailVerified: user.emailVerified,
-        createdAt: new Date(),
-      },
-    })
-  }
+  await prisma.user.createMany({
+    data: users,
+    skipDuplicates: true,
+  })
 
   // await devMigrate(50)
 }
 
-main()
+seed()
   .catch(e => {
     console.error(e)
     process.exit(1)

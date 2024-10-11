@@ -98,7 +98,6 @@ export class ProductController {
   @ApiCreatedResponse({ description: 'Product view increased' })
   @ApiNotModifiedResponse({ description: 'View not updated' })
   async incrementView(@User('id') userId: string, @Param('id') id: string, @Ip() ip: string) {
-    console.log(+id, ip, userId ? +userId : null)
     return await this.productService.incrementViewCount(+id, ip, userId ? +userId : null)
   }
 
