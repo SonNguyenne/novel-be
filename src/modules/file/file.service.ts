@@ -50,8 +50,9 @@ export class FileService {
 
     try {
       for (const file of files) {
+        const metaData = { 'Content-Type': file.mimetype }
         const { originalname: fileName, buffer, size, mimetype } = file
-        await this.minioClient.putObject(this.bucket, fileName, buffer, size)
+        await this.minioClient.putObject(this.bucket, fileName, buffer, size, metaData)
 
         const extension = fileName.split('.').pop()
 
