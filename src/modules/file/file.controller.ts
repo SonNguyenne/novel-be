@@ -40,7 +40,7 @@ export class FileController {
     schema: {
       type: 'object',
       properties: {
-        file: {
+        files: {
           type: 'string',
           format: 'binary', // Định dạng là binary để Swagger hiển thị chỗ upload file
         },

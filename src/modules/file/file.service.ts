@@ -11,11 +11,10 @@ export class FileService {
   constructor() {
     this.minioClient = new Minio.Client({
       endPoint: process.env.MINIO_ENDPOINT,
-      port: Number(process.env.MINIO_PORT) || 9001,
+      port: Number(process.env.MINIO_PORT) || 9000,
       useSSL: process.env.MINIO_USE_SSL === 'true' ? true : false,
       accessKey: process.env.MINIO_ACCESS_KEY,
       secretKey: process.env.MINIO_SECRET_KEY,
-      region: 'us-east-1', // Set the region to us-east-1 or your specific region
     })
   }
 
@@ -87,10 +86,9 @@ export class FileService {
 
   async getPresignedUrl(bucket: string, fileName: string): Promise<{ url: string; publicUrl: string }> {
     try {
-      //expired in seconds
-      // const expiryTime = 60
-      const url = await this.minioClient.presignedUrl('GET', bucket, fileName)
-      console.log('Presigned URL[[[[[[[[[[>]]]]]]]]]]:', this.minioClient)
+      //expired in a week by seconds
+      const expiryTime = 7 * 24 * 60 * 60
+      const url = await this.minioClient.presignedUrl('GET', bucket, fileName, expiryTime)
       const protocol = this.minioClient['protocol'] || 'http:'
       const host = this.minioClient['host']
       const port = this.minioClient['port']
