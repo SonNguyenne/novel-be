@@ -1,6 +1,5 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common'
 import { OwnerGuard } from '../guards'
-import { ROLE } from '../enums/role.enum'
 import { Authorization } from './authorization.decorator'
 import { ApiBearerAuth, ApiForbiddenResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
 

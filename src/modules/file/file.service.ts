@@ -1,60 +1,81 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common'
 import { Response } from 'express'
 import * as Minio from 'minio'
+import { IFile } from 'src/common/interfaces'
 
 const bucket = 'readordead'
 
 @Injectable()
 export class FileService {
   private minioClient: Minio.Client
+  private bucket: string
 
   constructor() {
+    this.bucket = process.env.MINIO_PATH_BUCKET
     this.minioClient = new Minio.Client({
       endPoint: process.env.MINIO_ENDPOINT,
       port: Number(process.env.MINIO_PORT) || 9000,
       useSSL: process.env.MINIO_USE_SSL === 'true' ? true : false,
       accessKey: process.env.MINIO_ACCESS_KEY,
       secretKey: process.env.MINIO_SECRET_KEY,
+      region: 'us-east-1',
     })
+
+    this._checkBucketExistence()
   }
 
-  async uploadFiles(files: any[]): Promise<string[]> {
-    const fileUrls: string[] = []
+  private async _checkBucketExistence() {
+    try {
+      const bucketExists = await this.minioClient.bucketExists(this.bucket)
+      if (!bucketExists) {
+        await this.minioClient.makeBucket(this.bucket)
+
+        throw new BadRequestException(`Bucket "${this.bucket}" does not exist.`)
+      }
+    } catch (err) {
+      console.error('Error checking bucket existence:', err)
+      throw new BadRequestException('Error checking bucket existence')
+    }
+  }
+
+  private _getPublicUrl(fileName: string): string {
+    const protocol = this.minioClient['protocol'] || 'http:'
+    const host = this.minioClient['host']
+    const port = this.minioClient['port']
+    return `${protocol}//${host}:${port}/${this.bucket}/${fileName}`
+  }
+
+  async uploadFiles(files: Array<Express.Multer.File>): Promise<IFile[]> {
+    const fileInfos: IFile[] = []
 
     try {
-      // Check if the bucket exists, if not, create it
-      const bucketExists = await this.minioClient.bucketExists(bucket)
-      if (!bucketExists) {
-        await this.minioClient.makeBucket(bucket)
-        console.log('Bucket created successfully in "us-east-1".')
-      }
-
       for (const file of files) {
-        const metaData = {
-          'Content-Type': file.mimetype,
-        }
-        console.log('file.originalname', file.originalname, typeof file.originalname)
-        const nameFile = file.originalname.toLowerCase().replaceAll(' ', '-')
+        const { originalname: fileName, buffer, size, mimetype } = file
+        await this.minioClient.putObject(this.bucket, fileName, buffer, size)
 
-        await this.minioClient.putObject(bucket, nameFile, file.buffer, file.size, metaData)
+        const extension = fileName.split('.').pop()
 
-        console.log(`File ${nameFile} uploaded successfully.`)
-        fileUrls.push(`http://localhost:3001/${bucket}/download/${nameFile}`)
+        fileInfos.push({
+          name: fileName,
+          size: size,
+          mimeType: mimetype,
+          extension: extension,
+          url: this._getPublicUrl(fileName),
+        })
       }
 
-      return fileUrls
+      return fileInfos
     } catch (error) {
       console.error('Error during file upload:', error)
       throw new BadRequestException('Error during file upload')
     }
   }
 
-  async downloadFile(bucket: string, fileName: string, response: Response): Promise<void> {
+  async downloadFile(fileName: string, response: Response): Promise<void> {
     try {
       const stat = await this.minioClient.statObject(bucket, fileName)
       const { size, metaData } = stat
 
-      // Set response headers for file download
       response.writeHead(200, {
         ...metaData,
         'Content-Type': 'application/octet-stream',
@@ -64,39 +85,18 @@ export class FileService {
         'Content-Meta': JSON.stringify(metaData),
       })
 
-      // Stream the object from Minio
       const dataStream = await this.minioClient.getObject(bucket, fileName)
       dataStream.pipe(response)
 
-      // Handle any errors that may occur during streaming
-      dataStream.on('error', err => {
-        console.error('Error streaming the file:', err)
-        response.status(500).send('Internal Server Error')
-      })
+      dataStream.on('error', err => new Error(err.message))
     } catch (err) {
-      // Handle file not found or other errors
-      if (err.code === 'NoSuchKey') {
-        throw new NotFoundException('File not found')
-      } else {
-        console.error('Error retrieving the file:', err)
-        response.status(500).send('Internal Server Error')
-      }
+      if (err.code === 'NoSuchKey') throw new NotFoundException('File not found')
+      throw new Error(err)
     }
   }
 
-  async getPresignedUrl(bucket: string, fileName: string): Promise<{ url: string; publicUrl: string }> {
-    try {
-      //expired in a week by seconds
-      const expiryTime = 7 * 24 * 60 * 60
-      const url = await this.minioClient.presignedUrl('GET', bucket, fileName, expiryTime)
-      const protocol = this.minioClient['protocol'] || 'http:'
-      const host = this.minioClient['host']
-      const port = this.minioClient['port']
-      const publicUrl = protocol + '//' + host + ':' + port + '/' + bucket + '/' + fileName
-      return { url, publicUrl }
-    } catch (err) {
-      console.error('Error generating presigned URL:', err)
-      throw new BadRequestException('Error generating presigned URL')
-    }
+  getPresignedUrl(fileName: string): string {
+    // TODO: Return file image not string
+    return this._getPublicUrl(fileName)
   }
 }

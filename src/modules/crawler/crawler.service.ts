@@ -2,12 +2,12 @@ import * as he from 'he'
 import { aiTranslate, crawling } from 'src/common/utils'
 import { STATUS } from 'src/common'
 import { JjwrcDto, TruyenFullDto, TruyenHdDto } from './crawler.dto'
-import { ChapterInterface, ProductInterface } from './interface'
+import { IChapter, IProduct } from 'src/common/interfaces'
 
 export class CrawlerService {
   async fromTruyenhd(crawlerDto: TruyenHdDto) {
     try {
-      const result: ProductInterface = await crawling(crawlerDto.uri, ($: cheerio.CheerioAPI) => {
+      const result: IProduct = await crawling(crawlerDto.uri, ($: cheerio.CheerioAPI) => {
         // Check last character of uri
         if (crawlerDto.uri.slice(-1) === '/') crawlerDto.uri = crawlerDto.uri.slice(0, -1)
 
@@ -23,7 +23,7 @@ export class CrawlerService {
           $('.table-column2.crop-text-1 span').text().trim() == 'Đang Cập Nhật' ? STATUS.PROGRESS : STATUS.DONE
         const description = $('.excerpt-full.hidden').text().trim()
 
-        const newStory: ProductInterface = {
+        const newStory: IProduct = {
           id: +id,
           name,
           author,
@@ -53,7 +53,7 @@ export class CrawlerService {
             if (element.html() && element.html() !== null && element.html().trim() !== '') {
               foundContent = true
 
-              const chapter: ChapterInterface = {
+              const chapter: IChapter = {
                 productId: +result.id,
                 chapterName,
                 content: he.decode(element.html()),
@@ -82,7 +82,7 @@ export class CrawlerService {
 
   async fromTruyenfull(crawlerDto: TruyenFullDto) {
     try {
-      const result: ProductInterface = await crawling(crawlerDto.uri, ($: cheerio.CheerioAPI) => {
+      const result: IProduct = await crawling(crawlerDto.uri, ($: cheerio.CheerioAPI) => {
         // Check last character of uri
         if (crawlerDto.uri.slice(-1) === '/') crawlerDto.uri = crawlerDto.uri.slice(0, -1)
 
@@ -105,7 +105,7 @@ export class CrawlerService {
         const image = $('img[itemprop="image"]').first().attr('src')
         const description = $('div.desc-text').text().trim()
 
-        const newStory: ProductInterface = {
+        const newStory: IProduct = {
           id: 0,
           name,
           author,
@@ -135,7 +135,7 @@ export class CrawlerService {
 
               // Check if content available
               if (element.html()) {
-                const chapter: ChapterInterface = {
+                const chapter: IChapter = {
                   chapterName,
                   content: he.decode(element.html()),
                   chapterNumber: i,
@@ -158,7 +158,7 @@ export class CrawlerService {
 
               // Check if content available
               if (element.html()) {
-                const chapter: ChapterInterface = {
+                const chapter: IChapter = {
                   chapterName,
                   content: he.decode(element.html()),
                   chapterNumber: i,
@@ -179,7 +179,7 @@ export class CrawlerService {
 
   async fromJjwrc(crawlerDto: JjwrcDto) {
     try {
-      const result: ProductInterface = await crawling(crawlerDto.uri, async ($: cheerio.CheerioAPI) => {
+      const result: IProduct = await crawling(crawlerDto.uri, async ($: cheerio.CheerioAPI) => {
         // Check last character of uri
         if (crawlerDto.uri.slice(-1) === '/') crawlerDto.uri = crawlerDto.uri.slice(0, -1)
 
@@ -195,7 +195,7 @@ export class CrawlerService {
         const status = $('span[itemprop="updataStatus"] font').text().trim() == '完结' ? 'DONE' : 'PROGRESS'
         const description = $('div#novelintro').text().trim()
 
-        const newStory: ProductInterface = {
+        const newStory: IProduct = {
           id: +id,
           name: await aiTranslate(name),
           author: await aiTranslate(author),
@@ -226,7 +226,7 @@ export class CrawlerService {
             if (element.html() && element.html() !== null) {
               foundContent = true
 
-              const chapter: ChapterInterface = {
+              const chapter: IChapter = {
                 chapterName: await aiTranslate(chapterName),
                 content: await aiTranslate(he.decode(element.html())),
                 chapterNumber: i,

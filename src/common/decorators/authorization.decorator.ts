@@ -3,6 +3,11 @@ import { ApiBearerAuth, ApiForbiddenResponse, ApiUnauthorizedResponse } from '@n
 import { AuthGuard, RolesGuard } from '../guards'
 import { ROLE } from '../enums/role.enum'
 
+/**
+ * @example ```@Authorization()``` - For check login
+ * @example ```@Authorization(ROLE.MANAGER)``` - For manager
+ * @example ```@Authorization(ROLE.ADMIN)``` - For admin
+ */
 export function Authorization(...roles: ROLE[]) {
   return applyDecorators(
     SetMetadata('roles', roles),
