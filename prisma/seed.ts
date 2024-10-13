@@ -17,11 +17,12 @@ export async function seed() {
     data: users,
     skipDuplicates: true,
   })
-
-  // await devMigrate(50)
 }
 
 seed()
+  .then(async () => {
+    // await devMigrate(50)
+  })
   .catch(e => {
     console.error(e)
     process.exit(1)
@@ -30,6 +31,10 @@ seed()
     await prisma.$disconnect()
   })
 
+/**
+ * Dummy data (fake data)
+ * Dev only
+ */
 async function devMigrate(numberRecords: number) {
   for (let i = 0; i < numberRecords; i++) {
     // User
@@ -87,8 +92,15 @@ async function devMigrate(numberRecords: number) {
       },
     })
 
-    await prisma.rate.create({
-      data: {
+    await prisma.rate.upsert({
+      where: {
+        createdBy_productId: { createdBy: randomUser.id, productId: randomProduct.id },
+      },
+      update: {
+        rating: faker.number.int({ min: 1, max: 5 }),
+        updatedAt: new Date(),
+      },
+      create: {
         createdBy: randomUser.id,
         productId: randomProduct.id,
         rating: faker.number.int({ min: 1, max: 5 }),
