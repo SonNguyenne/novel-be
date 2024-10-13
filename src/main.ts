@@ -3,12 +3,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
 import { seed } from 'prisma/seed'
+import { LoggingInterceptor } from './app.interceptor'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalInterceptors(new LoggingInterceptor())
 
   const config = new DocumentBuilder()
     .setTitle('Novel API docs')
@@ -26,7 +28,7 @@ async function bootstrap() {
     .addTag('payment')
     .build()
   const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  SwaggerModule.setup('api', app, document, { swaggerOptions: { defaultModelsExpandDepth: -1 } })
 
   await seed()
 

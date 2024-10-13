@@ -25,12 +25,12 @@ export class FileService {
   }
 
   private async _checkBucketExistence() {
+    if (process.env.USE_MINIO !== String(1)) return
+
     try {
       const bucketExists = await this.minioClient.bucketExists(this.bucket)
       if (!bucketExists) {
         await this.minioClient.makeBucket(this.bucket)
-
-        throw new BadRequestException(`Bucket "${this.bucket}" does not exist.`)
       }
     } catch (err) {
       throw new BadRequestException('Error checking bucket existence')
