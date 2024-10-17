@@ -21,7 +21,9 @@ export async function seed() {
 
 seed()
   .then(async () => {
-    // await devMigrate(50)
+    if (Number(process.env.USE_FAKE_DATA) === 1) {
+      await devMigrate(50)
+    }
   })
   .catch(e => {
     console.error(e)
