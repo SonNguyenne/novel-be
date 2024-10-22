@@ -47,7 +47,7 @@ async function devMigrate(numberRecords: number) {
         password: bcrypt.hashSync('123456', Number(process.env.SALT_BCRYPT)),
         phone: faker.phone.number(),
         birthdate: faker.date.past(),
-        picture: faker.image.avatar(),
+        image: faker.image.avatar(),
         money: parseFloat(faker.finance.amount({ min: 100, max: 10000, dec: 2 })),
         refreshToken: faker.string.uuid(),
         emailVerified: faker.datatype.boolean(),
